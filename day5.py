@@ -126,8 +126,6 @@ def p1(filename):
     print(best_loc)
 
 def p2(filename):
-    # There must be a smart way, where we can just check the boundaries 
-    # of each of the maps. But I am lazy and in a rush. 
     lines = utils.read_file(filename)
     seedpairs, maps = getmaps(lines)
     seedpairs = seedpairs[:2]
