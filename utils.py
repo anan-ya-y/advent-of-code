@@ -1,4 +1,4 @@
-def get_file_stripped_lines(filename):
+def read_lines(filename):
     with open(filename, 'r') as f:
         lines = f.readlines()
 
@@ -7,3 +7,16 @@ def get_file_stripped_lines(filename):
 def get_file_content(filename):
     with open(filename, 'r') as f:
         return f.read().strip()
+    
+def get_file_content_raw(filename):
+    with open(filename, 'r') as f:
+        return f.read()
+    
+def split_lines(filecontents):
+    return filecontents.split("\n")
+
+def split_and_strip(filecontents):
+    lines = [l.strip() for l in filecontents.split("\n")]
+    if lines[-1] == "":
+        lines.pop()
+    return lines

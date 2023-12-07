@@ -1,10 +1,10 @@
 import utils
 
-def p1(filename):
-    lines = utils.get_file_content(filename)
+def p2(input):
+    lines = input
 
     elves = lines.split("\n\n")
-    elves = [e.split('\n') for e in elves]
+    elves = [e.strip().split('\n') for e in elves]
     elves = [[int(k) for k in e] for e in elves]
     elves = [sum(e) for e in elves]
 
@@ -13,7 +13,15 @@ def p1(filename):
     t1 = max(elves)
     elves.remove(t1)
     t2 = max(elves)
-    print(top + t1 + t2)
+    return (top + t1 + t2)
 
-p1('inputs/1.real.txt')
+def p1(input):
+    lines = input
+
+    elves = lines.split("\n\n")
+    elves = [e.strip().split('\n') for e in elves]
+    elves = [[int(k) for k in e] for e in elves]
+    elves = [sum(e) for e in elves]
+
+    return max(elves)
 

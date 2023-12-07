@@ -62,4 +62,4 @@ def p1(filename):
     
 
 
-p1("inputs/25.real.txt")
+# p1("inputs/25.real.txt")
