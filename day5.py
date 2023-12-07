@@ -87,7 +87,7 @@ def get_best_loc(seeds, maps):
             best_loc = loc
     return best_loc
 
-def get_best_loc_binsearch(seed_min, seed_max, maps):
+def get_best_loc_binsearch(seed_min, seed_max, maps): # still doesn't work 
     # base cases
     if seed_min > seed_max:
         print("oh no")
