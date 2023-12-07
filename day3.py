@@ -35,8 +35,8 @@ def get_surrounding_nums(grid, coord):
         surrounding_nums.add(num)
     return surrounding_nums
 
-def parseschematic(filename):
-    lines = utils.read_file(filename)
+def parseschematic(input):
+    lines = utils.split_and_strip(input)
 
     input_grid = {} # only the non-empty spots
     symbollocs = [] # positions of symbols
@@ -50,8 +50,8 @@ def parseschematic(filename):
 
     return input_grid, symbollocs
     
-def p1(filename):
-    input_grid, symbollocs = parseschematic(filename)
+def p1(input):
+    input_grid, symbollocs = parseschematic(input)
     all_adj_nums = set()
     for symbolloc in symbollocs:
         surr_nums = get_surrounding_nums(input_grid, symbolloc)
@@ -61,10 +61,11 @@ def p1(filename):
     sum = 0
     for n in list(all_adj_nums):
         sum += n[1]
-    print(sum)
+    
+    return sum
 
-def p2(filename):
-    input_grid, symbollocs = parseschematic(filename)
+def p2(input):
+    input_grid, symbollocs = parseschematic(input)
     gear_ratios = []
     for symbolloc in symbollocs:
         if input_grid[symbolloc] != "*":
@@ -78,7 +79,7 @@ def p2(filename):
             gear_ratio *= num[1]
         gear_ratios.append(gear_ratio)
 
-    print(sum(gear_ratios))
+    return (sum(gear_ratios))
 
-p1("inputs/3.real.txt")
-p2("inputs/3.real.txt")
+# p1("inputs/3.real.txt")
+# p2("inputs/3.real.txt")

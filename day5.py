@@ -119,16 +119,16 @@ def get_best_loc_binsearch(seed_min, seed_max, maps):
 # p2 amswer: 99751240
 
 
-def p1(filename):
-    lines = utils.read_file(filename)
+def p1(input):
+    lines = utils.split_and_strip(input)
     seeds, maps = getmaps(lines)
     best_loc = get_best_loc(seeds, maps)
-    print(best_loc)
+    return (best_loc)
 
-def p2(filename):
-    lines = utils.read_file(filename)
+def p2(input):
+    lines = utils.split_and_strip(input)
     seedpairs, maps = getmaps(lines)
-    seedpairs = seedpairs[:2]
+    seedpairs = seedpairs
 
     best_loc = None
     for i in range(0, len(seedpairs), 2):
@@ -141,7 +141,7 @@ def p2(filename):
         if best_loc is None or loc < best_loc:
             best_loc = loc
 
-    print(best_loc)
+    return (best_loc)
 
     
 

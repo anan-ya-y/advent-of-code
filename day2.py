@@ -25,8 +25,8 @@ def get_game_info(line):
 
     
 
-def part1_solution(filename):
-    input = utils.read_file(filename)
+def p1(input):
+    input = utils.split_and_strip(input)
     sum = 0
     for line in input:
         id, reds, greens, blues = get_game_info(line)
@@ -34,18 +34,20 @@ def part1_solution(filename):
             max(greens) <= 13 and \
             max(blues) <= 14:
             sum += id
-    print(sum)
+    
+    return sum
 
-def part2_solution(filename):
-    input = utils.read_file(filename)
+def p2(input):
+    input = utils.split_and_strip(input)
     sum = 0
     for line in input:
         id, reds, greens, blues = get_game_info(line)
         this_game_value = max(reds) * max(greens) * max(blues)
         sum += this_game_value
-    print(sum)
+    
+    return sum
         
         
 
-part1_solution("inputs/2.real.txt")
-part2_solution("inputs/2.real.txt")
+# part1_solution("inputs/2.real.txt")
+# part2_solution("inputs/2.real.txt")

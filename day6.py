@@ -25,8 +25,8 @@ def get_match_window(t, d):
 
     return noptions
 
-def p1(filename):
-    lines = utils.read_file(filename)
+def p1(input):
+    lines = utils.split_and_strip(input)
     times = re.findall(r'(\d+)+', lines[0])
     distances = re.findall(r'(\d+)+', lines[1])
 
@@ -37,12 +37,11 @@ def p1(filename):
     for t, d in zip(times, distances):
         noptions = get_match_window(t, d)
         product *= noptions
-        print(noptions)
+        
+    return product
 
-    print(product)
-
-def p2(filename):
-    lines = utils.read_file(filename)
+def p2(input):
+    lines = utils.split_and_strip(input)
     times = re.findall(r'(\d+)+', lines[0])
     distances = re.findall(r'(\d+)+', lines[1])
 
@@ -50,8 +49,8 @@ def p2(filename):
     d = int(''.join(distances))
 
     noptions = get_match_window(t, d)
-    print(noptions)
+    return (noptions)
 
 
-p1("inputs/6.real.txt")
-p2("inputs/6.real.txt")
+# p1("inputs/6.real.txt")
+# p2("inputs/6.real.txt")

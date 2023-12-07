@@ -16,22 +16,23 @@ word2num = {'one':1,
             'nine':9
 }
 
-def part1_solution(filename):
-    input = utils.read_file(filename)
+def p1(input):
+    
+    input = utils.split_and_strip(input)
     sum = 0
     for line in input:
         numbers = re.findall(r'\d+?', line)
-        print(numbers)
+        # print(numbers)
         sum += 10*int(numbers[0]) + int(numbers[-1])
 
     return sum
 
-def part2_solution(filename):
+def p2(input):
     regexstr = "one|two|three|four|five|six|seven|eight|nine"
     forward = re.compile(regexstr + "|\d+?")
     backward = re.compile(regexstr[::-1] + "|\d+?")
 
-    input = utils.read_file(filename)
+    input = utils.split_and_strip(input)
     sum = 0
     for line in input:
         numbers = re.findall(forward, line)
@@ -43,6 +44,3 @@ def part2_solution(filename):
         sum += 10*int(firstNum) + int(lastNum)
 
     return sum
-
-# print(part1_solution("inputs/1.real.txt"))
-print(part2_solution("inputs/1.real.txt"))

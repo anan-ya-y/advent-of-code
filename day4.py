@@ -8,8 +8,8 @@ def read_card(line):
     
     return int(id), map(int, winning_nums), map(int, our_nums)
 
-def p1(filename):
-    lines = utils.read_file(filename)
+def p1(input):
+    lines = utils.split_and_strip(input)
     cards = [read_card(l) for l in lines]
     sum = 0
     for id, winning_nums, ours in cards:
@@ -18,7 +18,7 @@ def p1(filename):
         if nwinning > 0:
             sum += (2 ** (nwinning - 1))
 
-    print(sum)
+    return sum
 
 def p2_alternate(filename):
     lines = utils.read_file(filename)
@@ -38,8 +38,8 @@ def p2_alternate(filename):
 
     print(ncards)
 
-def p2(filename):
-    lines = utils.read_file(filename)
+def p2(input):
+    lines = utils.split_and_strip(input)
     cards = [read_card(l) for l in lines]
     cards = {id: (w, o) for (id, w, o) in cards}
     ncards = len(cards)
@@ -51,8 +51,8 @@ def p2(filename):
         for j in range(min(ncards+1, i+1), min(ncards+1, i+1+nwins)):
             ncards_each[j] += ncards_each[i]
             
-    print(sum(ncards_each))
+    return (sum(ncards_each))
 
 
-p1('inputs/4.real.txt')
-p2('inputs/4.real.txt')
+# p1('inputs/4.real.txt')
+# p2('inputs/4.real.txt')
