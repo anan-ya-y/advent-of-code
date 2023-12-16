@@ -1,5 +1,4 @@
 import utils
-
 C = complex
 
 directions = {
@@ -15,30 +14,8 @@ symbols = {
     'L': 'NE',
     'J': 'NW',
     '7': 'SW', 
-    'F': 'SE',
+    'F': 'ES',
 }
-
-def find_cycle(edge_function, start_vertex):
-    c = start_vertex
-    length = 0
-    visited = set()
-    visited.add(start_vertex)
-    while True:
-        neighbor_coords = [c+d for d in directions.values()]
-        neighbors = [d for d in neighbor_coords if edge_function(c, d)]
-        # one neighbor should be in visited already. The next one is ours. 
-        # if both are visited, we're done. 
-        if neighbors[0] in visited and neighbors[1] in visited:
-            return visited
-        for n in neighbors:
-            if n not in visited:
-                c = n
-                visited.add(n)
-                length += 1
-                break
-
-    return -1
-        
 
 def process_input(input):
     grid_tiles = {}
@@ -54,55 +31,68 @@ def process_input(input):
             if input[row][col] == 'S':
                 start = C(row, col)
     # Add S's neighbors. 
+    grid_tiles[start] = []
+    startdirs = ""
     for d in directions:
         neighbor = start + directions[d]
         if neighbor in grid_tiles and start in grid_tiles[neighbor]:
-            grid_tiles[start] = [neighbor]
+            grid_tiles[start] += [neighbor]
+            startdirs += d
 
-    return grid_tiles, start, free_tiles
+    for s in symbols:
+        if startdirs == symbols[s] or startdirs[::-1] == symbols[s]:
+            startLetter = s
+
+    return grid_tiles, start, startLetter
+
+def find_loop(grid, start):
+    loop = set()
+    loop.add(start)
+
+    previous = start
+    current = grid[start][1]
+    while current != start:
+        loop.add(current)
+
+        if grid[current][0] == previous:
+            next = grid[current][1]
+        else:
+            next = grid[current][0]
+
+        previous = current
+        current = next
+
+    return loop
 
 def p1(input):
-    input = utils.split_and_strip(input)
-    grid_tiles, start, _ = process_input(input)
-    
-    def edge_fn(u, v):
-        if u in grid_tiles and v in grid_tiles[u]:
-            return 1
-        return None
-    
-    s = find_cycle(edge_fn, start)
+    processed = utils.split_and_strip(input)
+    grid, start, _ = process_input(processed)
 
-    return int(len(s)/2)
-            
+    loop = find_loop(grid, start)
+    return len(loop)//2
+
 def p2(input):
-    input = utils.split_and_strip(input)
-    grid_tiles, start, free_tiles = process_input(input)
+    processed = utils.split_and_strip(input)
+    grid, start, startLetter = process_input(processed)
 
-    def edge_fn(u, v):
-        if u in grid_tiles and v in grid_tiles[u]:
-            return 1
-        return None
+    loop = find_loop(grid, start)
+    processed[int(start.real)] = \
+        processed[int(start.real)].replace("S", startLetter)
     
-    s = find_cycle(edge_fn, start)
-
+    # a little bird told me you only need to check for JL|. 
     nInside = 0
-    for t in free_tiles:
-        r, c = t.real, t.imag
-        r = int(r)
-        c = int(c)
-        
-        up = set([t-C(k, 0) for k in range(r+1)])
-        down = set([t+C(k, 0) for k in range(1, len(input)-r)])
-        left = set([t-C(0, k) for k in range(c+1)])
-        right = set([t+C(0, k) for k in range(1, len(input[r])-c)])
-
-        if len(s.intersection(up)) % 2 == 1 and \
-            len(s.intersection(down)) % 2 == 1 and \
-            len(s.intersection(left)) % 2 == 1 and \
-            len(s.intersection(right)) % 2 == 1:
-            nInside += 1
-            print(t)
+    for row in range(len(processed)):
+        inside = False
+        for col in range(len(processed[row])):
+            c = processed[row][col]
+            if C(row, col) in loop:
+                if c in 'JL|':
+                    # print(row, col)
+                    inside = not inside
+            elif inside:
+                nInside += 1
 
     return nInside
 
 
+# correct answer 273. 
