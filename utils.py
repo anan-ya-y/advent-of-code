@@ -117,3 +117,13 @@ def longest_cycle(vertex_labels, edge_function, start_vertex):
 
     return best_dist
 
+
+def transpose_string_matrix(input):
+    ans = []
+    for col in range(len(input[0])):
+        s = ""
+        for r in range(len(input)):
+            s += input[r][col]
+        ans.append(s)
+
+    return ans
