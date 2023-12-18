@@ -32,9 +32,9 @@ def run_day(day, sample=False):
     filename = get_input_filename(day, sample)
     input = get_input_string(filename)
     p1_ans = m.p1(input)
-    p2_ans = m.p2(input)
-
     print("Part 1:\t", p1_ans)
+
+    p2_ans = m.p2(input)
     print("Part 2:\t", p2_ans)
 
     return p1_ans, p2_ans
