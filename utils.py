@@ -1,4 +1,5 @@
 import math
+from queue import PriorityQueue
 
 def read_file(filename):
     with open(filename, 'r') as f:
@@ -76,24 +77,30 @@ def dikjstra_with_neighbors(vertex_labels: list, neighbors:dict, \
                             edge_weights:dict, start_vertex):
     dist = {v: math.inf for v in vertex_labels}
     prev = {v: None for v in vertex_labels}
-    q = [v for v in vertex_labels]
     dist[start_vertex] = 0
+    visited = set()
 
-    while len(q) > 0:
-        u = q[0]
-        for v in q:
-            if dist[v] < dist[u]:
-                u = v
+    q = PriorityQueue()
+    queue_counter = 0
+    q.put((0, queue_counter, start_vertex))
+    queue_counter += 1
 
-        q.remove(u)
+
+    while not q.empty():
+        _, _, u = q.get()
+        if u in visited:
+            continue
+        visited.add(u)
 
         for v in neighbors[u]:
-            if v not in q or (u, v) not in edge_weights:
+            if v in visited: # I think we don't need this. 
                 continue
             alt = dist[u] + edge_weights[(u, v)]
             if alt < dist[v]:
                 dist[v] = alt
                 prev[v] = u
+                q.put((dist[v], queue_counter, v))
+                queue_counter += 1
 
     return dist, prev
 
