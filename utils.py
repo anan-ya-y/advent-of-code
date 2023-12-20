@@ -48,13 +48,32 @@ def binary_sort(arr, comparator):
     return arr
 
 
-# Performs Dijkstra's. 
+# Performs Dijkstra's. Slowly, because can't find graph neighbors quickly.
 # vertex_labels: list of vertices (YOUR labels)
 # edge_function: takes in two vertices and returns the edge weight between them. 
 #                edge_function = None if no edge exists. 
 # start_vertex: the vertex to start from
 # returns dict of vertex: distance from start_vertex
 def dijkstra(vertex_labels: list, edge_function, start_vertex):
+    print("Beginning dijkstra preprocessing O(n^2)")
+    print("n=", len(vertex_labels))
+
+    # Make edge_weights dict, so that it's easier to find neighbors
+    edge_weights = {}
+    neighbors = {v: [] for v in vertex_labels}
+    for u in vertex_labels:
+        for v in vertex_labels:
+            if edge_function(u, v) is not None:
+                edge_weights[(u, v)] = edge_function(u, v)
+                neighbors[u].append(v)
+
+    print("Dikjstra preprocessing done. Starting actual algorithm.")
+    return dikjstra_with_neighbors(vertex_labels, neighbors, \
+                                   edge_weights, start_vertex)
+
+
+def dikjstra_with_neighbors(vertex_labels: list, neighbors:dict, \
+                            edge_weights:dict, start_vertex):
     dist = {v: math.inf for v in vertex_labels}
     prev = {v: None for v in vertex_labels}
     q = [v for v in vertex_labels]
@@ -68,10 +87,10 @@ def dijkstra(vertex_labels: list, edge_function, start_vertex):
 
         q.remove(u)
 
-        for v in vertex_labels:
-            if v not in q or edge_function(u, v) is None:
+        for v in neighbors[u]:
+            if v not in q or (u, v) not in edge_weights:
                 continue
-            alt = dist[u] + edge_function(u, v)
+            alt = dist[u] + edge_weights[(u, v)]
             if alt < dist[v]:
                 dist[v] = alt
                 prev[v] = u

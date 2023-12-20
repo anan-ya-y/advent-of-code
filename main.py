@@ -2,6 +2,7 @@ import importlib
 import argparse
 import aocd
 import os
+import time
 
 
 def get_input_filename(day, sample=False):
@@ -31,11 +32,16 @@ def run_day(day, sample=False):
     m = modules[day]
     filename = get_input_filename(day, sample)
     input = get_input_string(filename)
-    p1_ans = m.p1(input)
-    print("Part 1:\t", p1_ans)
 
+    p1_stime = time.time()
+    p1_ans = m.p1(input)
+    p1_etime = time.time()
+    print("Part 1:\t", p1_ans, "\t", round(p1_etime-p1_stime, 5), "s")
+
+    p2_stime = time.time()
     p2_ans = m.p2(input)
-    print("Part 2:\t", p2_ans)
+    p2_etime = time.time()
+    print("Part 2:\t", p2_ans, "\t", round(p2_etime-p2_stime, 5), "s")
 
     return p1_ans, p2_ans
 
