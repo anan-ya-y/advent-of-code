@@ -36,13 +36,16 @@ def make_graph(map, minstepsize=1, maxstepsize=3):
                     
     # add start and end vertices
     vertices += ["start", "end"]
-    neighbors["start"] = [(C(0, 0), d) for d in [NORTH, SOUTH, EAST, WEST]]
-    edge_weights[("start", (C(0, 0), d))] = map[C(0, 0)]
     neighbors["end"] = []
+    neighbors["start"] = []
     for d in [NORTH, SOUTH, EAST, WEST]:
+        neighbors["start"] += [(C(0, 0), d)]
+        edge_weights[("start", (C(0, 0), d))] = 0
+        
         neighbors[(map["target"], d)] = ["end"]
         edge_weights[((map["target"], d), "end")] = 0
-    
+
+        
     return vertices, neighbors, edge_weights
 
 def p1(input):
@@ -52,50 +55,50 @@ def p1(input):
     print("starting Dijkstra")
     dist, prev = utils.dikjstra_with_neighbors(vertex_labels, neighbors, \
                                                edge_weights, "start") 
-    return (dist["end"] - map[C(0, 0)])   
+    return (dist["end"])   
     
 
 
     # DIJKSTRA ATTEMPT #1: took too long because of in-dijkstra graph const
     # vertices are (x, last_dir) 
-    def edge_function(u, v):
-        # handle start and end vertices
-        if u == "start" and v[0] == C(0, 0):
-            return map[C(0, 0)]
-        if v == "end" and u[0] == map["target"]:
-            return 0
-        if u in ["start", "end"] or v in ["start", "end"]:
-            return None
+    # def edge_function(u, v):
+    #     # handle start and end vertices
+    #     if u == "start" and v[0] == C(0, 0):
+    #         return map[C(0, 0)]
+    #     if v == "end" and u[0] == map["target"]:
+    #         return 0
+    #     if u in ["start", "end"] or v in ["start", "end"]:
+    #         return None
 
-        ux, ud = u
-        vx, vd = v
-        # ux to vx must be less than 3
-        # ud and vd must not be the same or backwards to each other
-        # vd must be the direction of ux to vx
-        # don't need to check if it's in the map;
-        # vertices are already generated that way. 
+    #     ux, ud = u
+    #     vx, vd = v
+    #     # ux to vx must be less than 3
+    #     # ud and vd must not be the same or backwards to each other
+    #     # vd must be the direction of ux to vx
+    #     # don't need to check if it's in the map;
+    #     # vertices are already generated that way. 
 
-        if ud == vd or ud == -vd:
-            return None
+    #     if ud == vd or ud == -vd:
+    #         return None
     
-        if vx == ux+vd:
-            return map[vx]
-        if vx == ux + (2*vd):
-            return map[ux+vd] + map[vx]
-        if vx == ux + (3*vd):
-            return map[ux+vd] + map[ux+(2*vd)] + map[vx]
+    #     if vx == ux+vd:
+    #         return map[vx]
+    #     if vx == ux + (2*vd):
+    #         return map[ux+vd] + map[vx]
+    #     if vx == ux + (3*vd):
+    #         return map[ux+vd] + map[ux+(2*vd)] + map[vx]
         
-        return None
+    #     return None
     
-    def vertex_labels():
-        labels = []
-        for m in map:
-            if m == "target":
-                continue
-            for d in [NORTH, SOUTH, EAST, WEST]:
-                labels.append((m, d))
-        labels += ["start", "end"]
-        return labels
+    # def vertex_labels():
+    #     labels = []
+    #     for m in map:
+    #         if m == "target":
+    #             continue
+    #         for d in [NORTH, SOUTH, EAST, WEST]:
+    #             labels.append((m, d))
+    #     labels += ["start", "end"]
+    #     return labels
     # dist, prev = utils.dijkstra(vertex_labels(), \
     #                             edge_function, \
     #                             "start")
@@ -114,7 +117,14 @@ def p1(input):
     # return m[(C(0, 0), EAST, 0, 0)] - map[C(0, 0)]
 
 def p2(input):
-    return
+    map = read_map(input)
+    
+    vertex_labels, neighbors, edge_weights = make_graph(map, 4, 10)
+
+    print("starting Dijkstra")
+    dist, prev = utils.dikjstra_with_neighbors(vertex_labels, neighbors, \
+                                               edge_weights, "start") 
+    return (dist["end"])   
 
 def read_map(input):
     input = utils.split_and_strip(input)
