@@ -21,6 +21,23 @@ def split_and_strip(filecontents):
 def lcm(a, b):
     return abs(a*b) // math.gcd(a, b)
 
+def to_base_n(dec_num, n):
+    ans = 0
+    ndigits = int(math.log(dec_num, n)) + 1
+    for i in range(ndigits-1, -1, -1):
+        ans *= 10
+        ans += (dec_num // (n**i))
+        dec_num %= (n**i)
+
+    return ans
+
+def from_base_n(num, n):
+    ans = 0
+    for i in range(len(str(num))):
+        ans += (num % 10) * (n**i)
+        num //= 10
+    return ans
+
 
 # Binary sorts an array. 
 # comparator takes inputs (a, b) and returns True if a > b
@@ -81,10 +98,9 @@ def dikjstra_with_neighbors(vertex_labels: list, neighbors:dict, \
     visited = set()
 
     q = PriorityQueue()
-    queue_counter = 0
+    queue_counter = 0 # exists as tiebreaker in pq
     q.put((0, queue_counter, start_vertex))
     queue_counter += 1
-
 
     while not q.empty():
         _, _, u = q.get()
