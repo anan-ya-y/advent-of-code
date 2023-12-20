@@ -70,4 +70,4 @@ def p2(input):
         
         new_input.append(dir + " " + str(amount) + " asdf")
 
-    return p1("\n".join(new_input))
+    return p1("\n".join(new_input)) # haha cheating!! 
