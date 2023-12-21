@@ -1,59 +1,71 @@
 # I REALLY REALLY DID NOT FEEL LIKE DOING THIS ONE. 
-# So, I copied someone else's. 
-# I know & understand how it works, I guess, but I did not write this at all .
+# So, I looked online, wrote the recurrence on paper, and then wrote this. 
 # https://github.com/Anshuman-UCSB/Advent-Of-Code/blob/master/2023/Python/src/day12.py
+import utils
 
-import re
-
-def solve(line, nums, part1=True):
-    if part1 == False:
-        line = "?".join([line]*5)
-        nums *= 5
-
-    DP = {}
-
-    def f(i, n, b): # return how many solutions there are from this position
-        # i - index in line
-        # n - index in nums
-        # b - size of current block
-        if (i,n,b) in DP:return DP[(i,n,b)] # DP already solved it
+def get_n_arrangements(arr, nums):
+    arrangements = {}
+    # Not gonna care about eval order. 
+    # number of possible arrangements of nums[j:] in arr[i:] given 
+    # that we have arranged b entries of nums[j]. 
+    def arrange(i, j, b): 
+        if (i, j, b) in arrangements:
+            return arrangements[(i, j, b)]
         
-        if i == len(line):    # at the end of the line, return 1 if this is a posible configuration or 0 otherwise
-            return int(
-                n == len(nums) and b == 0 or             # no current block, and finished all numbers
-                n == len(nums)-1 and b == nums[-1]        # one last block, and currently in a block of that size
-            )
+        if i >= len(arr):
+            nways = 0
+            if j >= len(nums) and b == 0:
+                nways = 1
+            if j == len(nums)-1 and b == nums[-1]:
+                nways = 1
+            arrangements[(i, j, b)] = nways
+            return nways
+            
+        
+        nways = 0
+        if arr[i] in "?.": # this is a .
+            if b == 0:
+                nways += arrange(i+1, j, 0) # just a dot
+            else:
+                if j >= len(nums): 
+                    # we are partly thorugh a list of springs but we don't want any more springs
+                    arrangements[(i, j, b)] = 0
+                    return 0
+                if b == nums[j]:
+                    nways += arrange(i+1, j+1, 0) # finish this operation
+                if b < nums[j]:
+                    nways += 0 # broke the dot
 
-        ans = 0
-        if line[i] in ".?":    # treat it like a .
-            if(b == 0):
-                ans += f(i+1, n, 0) # just keep moving forward
-            else:            # we have a current block
-                if n == len(nums): return 0    # more springs than input asks for, so not a solution
-                if b == nums[n]:             # If we currently have a continguous spring of the required size
-                    ans += f(i+1, n+1, 0)    # Move forward and count this block
-        if line[i] in "#?": # treat it like a #
-            ans += f(i+1, n, b+1)     # no choice but to continue current block
-        DP[(i,n,b)] = ans # save to DP
-        return ans
-    return f(0,0,0)
 
-def parseLine(l):
-    lhs,rhs = re.sub(r"\.+",".",l).split()
-    nums = eval(rhs)
-    return (lhs, nums)
+        if arr[i] in "?#": # this is a #
+            # advance the current arrangement
+            nways += arrange(i+1, j, b+1)
 
-p1_ans, p2_ans = 0, 0
-def main(input):
-    inps = [parseLine(l) for l in input.splitlines()]
-    global p1_ans, p2_ans
-    p1_ans, p2_ans = sum(solve(*l) for l in inps), sum(solve(*l, part1 = False) for l in inps)
+        arrangements[(i, j, b)] = nways
+        return nways
+        
+    return arrange(0, 0, 0)
 
 def p1(input):
-    main(input)
-    global p1_ans
-    return p1_ans
+    input = utils.split_and_strip(input)
+
+    sum = 0
+    for i in input:
+        springlist, nums = i.split(" ")
+        nums = list(map(int, nums.split(",")))
+
+        sum += get_n_arrangements(springlist, nums)
+
+    return sum
 
 def p2(input):
-    global p2_ans
-    return p2_ans
+    input = utils.split_and_strip(input)
+
+    sum = 0
+    for i in input:
+        springlist, nums = i.split(" ")
+        nums = list(map(int, nums.split(",")))
+
+        sum += get_n_arrangements("?".join([springlist]*5), nums*5)
+
+    return sum
