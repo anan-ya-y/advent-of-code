@@ -99,6 +99,7 @@ def interval_waterfall(map):
             next_ranges, next_label, changed = next_inst
             new_ranges = ranges.copy()
             if changed is not None:
+                # one COULD do range math, but this is more foolproof and less thinking. 
                 in_range = set(range(ranges[changed][0]+1, ranges[changed][1]))
                 overlap_range = set(range(next_ranges[changed][0]+1, next_ranges[changed][1]))
 
