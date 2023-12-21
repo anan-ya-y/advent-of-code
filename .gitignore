@@ -1,3 +1,4 @@
 inputs/*
 **.pyc
 **.out
+day12.py
