@@ -1,4 +1,6 @@
 inputs/*
 **.pyc
 **.out
-day12.py
+**.gv
+**.pdf
+.vscode/launch.json
