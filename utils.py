@@ -65,6 +65,17 @@ def binary_sort(arr, comparator):
 
     return arr
 
+def make_graph(vertex_labels, edge_function):
+    edge_weights = {}
+    neighbors = {}
+    edge_weights = {}
+    neighbors = {v: [] for v in vertex_labels}
+    for u in vertex_labels:
+        for v in vertex_labels:
+            if edge_function(u, v) is not None:
+                edge_weights[(u, v)] = edge_function(u, v)
+                neighbors[u].append(v)
+    return edge_weights, neighbors
 
 # Performs Dijkstra's. Slowly, because can't find graph neighbors quickly.
 # vertex_labels: list of vertices (YOUR labels)
@@ -77,13 +88,7 @@ def dijkstra(vertex_labels: list, edge_function, start_vertex):
     print("n=", len(vertex_labels))
 
     # Make edge_weights dict, so that it's easier to find neighbors
-    edge_weights = {}
-    neighbors = {v: [] for v in vertex_labels}
-    for u in vertex_labels:
-        for v in vertex_labels:
-            if edge_function(u, v) is not None:
-                edge_weights[(u, v)] = edge_function(u, v)
-                neighbors[u].append(v)
+    edge_weights, neighbors = make_graph(vertex_labels, edge_function)
 
     print("Dikjstra preprocessing done. Starting actual algorithm.")
     return dikjstra_with_neighbors(vertex_labels, neighbors, \
@@ -145,7 +150,6 @@ def dfs(vertex_labels, edge_function, start_vertex, target):
             if v not in visited and edge_function(u, v):
                 q.append((v, d+1))
     return -1
-
 
 # PROBABLY DOESN'T WORK. 
 def longest_cycle(vertex_labels, edge_function, start_vertex):
