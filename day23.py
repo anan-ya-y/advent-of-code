@@ -173,4 +173,5 @@ def p2(input):
     edge_weights, neighbors = make_edges_longer(neighbors, edge_weights)
     # visualize(neighbors)
     # print(edge_weights, neighbors)
+    print(len(neighbors))
     return get_longest_path(start, end, neighbors, edge_weights)
