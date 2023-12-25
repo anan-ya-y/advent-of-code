@@ -125,6 +125,18 @@ def dikjstra_with_neighbors(vertex_labels: list, neighbors:dict, \
 
     return dist, prev
 
+def reachability(neighbors, start_vertex):
+    # use bfs
+    q = [start_vertex]
+    visited = set()
+    while len(q) > 0:
+        u = q.pop(0)
+        visited.add(u)
+        for v in neighbors[u]:
+            if v not in visited:
+                q.append(v)
+    return visited
+
 def bfs(vertex_labels, edge_function, start_vertex, target):
     q = [(start_vertex, 0)]
     visited = set()
