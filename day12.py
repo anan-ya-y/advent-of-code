@@ -38,10 +38,6 @@ def p1(input):
                 heightmap[pos] = height
 
     return bfs(startpos, endpos, heightmap)
-            
-
-
-
 
 def p2(input):
     lines = utils.split_and_strip(input)
