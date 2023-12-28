@@ -2,6 +2,7 @@ import importlib
 import argparse
 import aocd
 import os
+import time
 
 
 def get_input_filename(day, sample=False):
@@ -15,7 +16,7 @@ def get_input_filename(day, sample=False):
         return filepath
     elif not sample:
         with open(filepath, "w") as f:
-            f.write(aocd.get_data(day=day, year=2022))
+            f.write(aocd.get_data(day=day, year=2023))
     else:
         print("No sample input file found for day", day)
         exit(1)
@@ -31,19 +32,24 @@ def run_day(day, sample=False):
     m = modules[day]
     filename = get_input_filename(day, sample)
     input = get_input_string(filename)
-    p1_ans = m.p1(input)
-    print("Part 1:\t", p1_ans)
 
+    p1_stime = time.time()
+    p1_ans = m.p1(input)
+    p1_etime = time.time()
+    print("Part 1:\t", p1_ans, "\t", round(p1_etime-p1_stime, 5), "s")
+
+    p2_stime = time.time()
     p2_ans = m.p2(input)
-    print("Part 2:\t", p2_ans)
+    p2_etime = time.time()
+    print("Part 2:\t", p2_ans, "\t", round(p2_etime-p2_stime, 5), "s")
 
     return p1_ans, p2_ans
 
 def submit_day(day):
     p1, p2 = run_day(day, sample=False)
-    aocd.submit(p1, part="a", day=day, year=2022)
+    aocd.submit(p1, part="a", day=day, year=2023)
     if p2 is not None:
-        aocd.submit(p2, part="b", day=day, year=2022)
+        aocd.submit(p2, part="b", day=day, year=2023)
 
 
 #--------- RUN CODE ----------#
@@ -68,9 +74,9 @@ parser.add_argument("-a", "--all", action="store_true", help="run all ")
 args = parser.parse_args()
 
 if args.all:
-    print("--AoC 2022--\n")
-    for m, _ in modules:
-        run_day(m, args.sample)
+    print("--AoC 2023--\n")
+    for i in range(1, len(modules)+1):
+        run_day(i, args.sample)
         print()
 else:
 
