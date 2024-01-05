@@ -16,7 +16,7 @@ def get_input_filename(day, sample=False):
         return filepath
     elif not sample:
         with open(filepath, "w") as f:
-            f.write(aocd.get_data(day=day, year=2023))
+            f.write(aocd.get_data(day=day, year=2022))
     else:
         print("No sample input file found for day", day)
         exit(1)
@@ -47,9 +47,9 @@ def run_day(day, sample=False):
 
 def submit_day(day):
     p1, p2 = run_day(day, sample=False)
-    aocd.submit(p1, part="a", day=day, year=2023)
+    aocd.submit(p1, part="a", day=day, year=2022)
     if p2 is not None:
-        aocd.submit(p2, part="b", day=day, year=2023)
+        aocd.submit(p2, part="b", day=day, year=2022)
 
 
 #--------- RUN CODE ----------#
