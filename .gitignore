@@ -1,6 +1,2 @@
 inputs/*
 **.pyc
-**.out
-**.gv
-**.pdf
-.vscode/launch.json
