@@ -12,10 +12,10 @@ def get_product(vertices, neighbors, edges_to_remove):
         new_neighbors[e[1]].remove(e[0])
 
     # 2 reachable components?
-    reachable1 = utils.reachability(new_neighbors, s1)
+    reachable1 = utils.reachability(s1, new_neighbors)
     if len(reachable1) == len(vertices):
         return -1 # dont bother with r2
-    reachable2 = utils.reachability(new_neighbors, t1)
+    reachable2 = utils.reachability(t1, new_neighbors)
     print(edges_to_remove, len(reachable1), len(reachable2))
     if len(reachable1.intersection(reachable2)) == 0 \
         and len(reachable1) + len(reachable2) == len(vertices):

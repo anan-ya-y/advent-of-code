@@ -149,7 +149,7 @@ def dikjstra_with_neighbors(vertex_labels: list, neighbors:dict, \
 
     return dist, prev
 
-def reachability(neighbors, start_vertex):
+def reachability(start_vertex, neighbors: dict):
     # use bfs
     q = [start_vertex]
     visited = set()
