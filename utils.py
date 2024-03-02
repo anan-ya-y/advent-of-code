@@ -149,6 +149,7 @@ def dikjstra_with_neighbors(vertex_labels: list, neighbors:dict, \
 
     return dist, prev
 
+# RUNS REALLY SLOWLY COMPARED TO BFS IMPLEMENTATION, NOT SURE WHY.
 def reachability(start_vertex, neighbors: dict):
     # use bfs
     q = [start_vertex]
