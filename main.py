@@ -54,7 +54,7 @@ def submit_day(year, day):
 def import_module(year, day):
     lib = "src_{}.day{}".format(year, day)
     m = globals()[lib] = importlib.import_module(lib)
-    print("Successfuly imported", lib)
+    # print("Successfuly imported", lib)
     return m
 
 #--------- RUN CODE ----------#
