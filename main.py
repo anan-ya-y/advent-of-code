@@ -16,7 +16,7 @@ def get_input_filename(year, day, sample=False):
         return filepath
     elif not sample:
         with open(filepath, "w") as f:
-            f.write(aocd.get_data(day=day, year=2023))
+            f.write(aocd.get_data(day=day, year=year))
     else:
         print("No sample input file found for day", day)
         exit(1)
@@ -47,9 +47,9 @@ def run_day(year, day, sample=False):
 
 def submit_day(year, day):
     p1, p2 = run_day(year, day, sample=False)
-    aocd.submit(p1, part="a", day=day, year=2023)
+    aocd.submit(p1, part="a", day=day, year=year)
     if p2 is not None:
-        aocd.submit(p2, part="b", day=day, year=2023)
+        aocd.submit(p2, part="b", day=day, year=year)
 
 def import_module(year, day):
     lib = "src_{}.day{}".format(year, day)
@@ -85,7 +85,7 @@ else: # importing all modules
             continue
 
 if args.all:
-    print("--AoC 2023--\n")
+    print("--AoC {}--\n".format(args.year))
     for i in range(1, len(modules)+1):
         run_day(args.year, i, args.sample)
         print()
