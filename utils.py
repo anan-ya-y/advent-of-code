@@ -137,18 +137,38 @@ def reachability(neighbors, start_vertex):
                 q.append(v)
     return visited
 
+# Returns length of shortest path from start_vertex to target
+# if target is None, returns dict of shortest paths lengths to all vertices.
+# vertex_labels: list of vertices (YOUR labels)
+# edge_function: takes in two vertices and returns the edge weight between them.
 def bfs(vertex_labels, edge_function, start_vertex, target):
+    _, neighbors = make_graph(vertex_labels, edge_function)
+    return bfs_with_neighbors(vertex_labels, neighbors, start_vertex, target)
+
+# Returns length of shortest path from start_vertex to target. 
+# if target is None, returns dict of shortest paths lengths to all vertices. 
+# vertex_labels: list of vertices (YOUR labels)
+# neighbors: dict of vertex: list of neighbors
+def bfs_with_neighbors(vertex_labels:list, neighbors:dict, start_vertex, target=None):
     q = [(start_vertex, 0)]
-    visited = set()
+    dists = {}
+
     while len(q) > 0:
         u, d = q.pop(0)
-        visited.add(u)
+
+        if u in dists:
+            continue
+
+        dists[u] = d
         if u == target:
-            return 1+d
-        for v in vertex_labels:
-            if v not in visited and edge_function(u, v):
+            return dists[u]
+        for v in neighbors[u]:
+            if v not in dists:
                 q.append((v, d+1))
-    return -1
+
+    if target is None:
+        return dists
+    return -1 # no path from start_vertex to target
 
 def dfs(vertex_labels, edge_function, start_vertex, target):
     q = [(start_vertex, 0)]
