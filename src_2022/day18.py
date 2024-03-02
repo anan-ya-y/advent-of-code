@@ -1,4 +1,5 @@
 import utils
+import time
 
 def istouching(cube1, cube2):
     return (abs(cube1[0] - cube2[0]) + \
@@ -28,6 +29,7 @@ def p2(input):
     input = utils.split_and_strip(input)
     input = [tuple(int(k) for k in i.split(",")) for i in input]
 
+    t = time.time()
     min_x = min([i[0] for i in input]) - 1
     max_x = max([i[0] for i in input]) + 1
     min_y = min([i[1] for i in input]) - 1
@@ -68,16 +70,18 @@ def p2(input):
         del edges[cube]
 
     # look for holes:
+    
     outside = (min_x, min_y, min_z)
     holes = []
+
+    # reachable_from_outside = utils.reachability(outside, edges)
+    reachable_from_outside = utils.bfs_with_neighbors(edges.keys(), edges, outside, None)
     for x in range(min_x, max_x+1):
         for y in range(min_y, max_y+1):
             for z in range(min_z, max_z+1):
                 if (x, y, z) in input:
                     continue # is not a hole
-
-                # if we can't reach the outside, this is a hole
-                if utils.bfs_with_neighbors(edges.keys(), edges, (x, y, z), outside) == -1:
+                if (x, y, z) not in reachable_from_outside:
                     holes.append((x, y, z))
 
     # adjust the input to p1
