@@ -1,7 +1,5 @@
 import utils, re
-
-# DP day!
-TIME = 30
+# Thanks hyper-neutrino for the graph compression idea as well as how to do p2! 
 
 def read_input(input):
     input = utils.split_and_strip(input)
@@ -16,125 +14,71 @@ def read_input(input):
         flowrates[key] = flowrate
     return graph, flowrates
 
+def compress_graph(graph, flowrates):
+    good_valves = [v for v in flowrates if flowrates[v] != 0] + ["AA"]
+    distances = {}
+    edge_function = lambda u, v: 1 if v in graph[u] else None
+    for v1 in good_valves:
+        v1dists = utils.bfs(graph.keys(), edge_function, v1, None)
+        for v2 in good_valves:
+            distances[(v1, v2)] = v1dists[v2]
+
+    return distances, good_valves
+
+mfr_arr = {}
+# max flow rate 
+# current = human's position
+# remaining_time = time left
+# opened = valves that are open
+def mfr(current, remaining_time, opened, flowrates, distances, bitmask_legend):
+    if (current, remaining_time, opened) in mfr_arr:
+        return mfr_arr[(current, remaining_time, opened)]
+    
+    all_valves = set(bitmask_legend)
+    opened_set = utils.bitmask_to_set(opened, bitmask_legend)
+    unopened_valves = all_valves.difference(opened_set)
+
+    max_flow = 0
+    for valve in unopened_valves:
+        # check if we can close it
+        new_remtime = remaining_time - distances[(current, valve)] - 1
+        if new_remtime <= 0:
+            continue # we don't have time to open it. 
+
+        new_opened = utils.set_to_bitmask(opened_set.union({valve}), bitmask_legend)
+        # new_opened = opened | (1 << bitmask_legend.index(valve))
+
+        flow = flowrates[valve] * new_remtime # we opened this valve. 
+        flow += mfr(valve, new_remtime, new_opened, flowrates, distances, bitmask_legend)
+
+        max_flow = max(max_flow, flow)
+
+    mfr_arr[(current, remaining_time, opened)] = max_flow
+    return max_flow
 
 def p1(input):
     graph, flowrates = read_input(input)
-    x = mfr("AA", 1, tuple([]), graph, flowrates)
+    distances, good_valves = compress_graph(graph, flowrates)
+
+    x = mfr("AA", 30, 0, flowrates, distances, good_valves)
     return x
 
 def p2(input):
     graph, flowrates = read_input(input)
-    x = mfr_elephant("AA","AA", 1, tuple([]), graph, flowrates)
-    return x
+    distances, good_valves = compress_graph(graph, flowrates)
 
-mfr_arr = {}
-def mfr(current, minutenum, opened, graph, flowrates):
-    # = max pressure from minute mn to minute 30 
-    # given human start position at current. 
-    # and visited contains all visited notdes
-    # print(current, minutenum, opened)
-    if (current, minutenum, opened) in mfr_arr:
-        return mfr_arr[(current, minutenum, opened)]
-    
-    opened = list(opened)
-    all_opened_flow = sum([flowrates[o] for o in opened])
+    best_flow = 0
+    max_bitmask = (1 << len(good_valves)) - 1
+    for flowval in range(max_bitmask // 2): # //2 beause we'll do the same work twice anyway
+        elephant_todos = flowval
+        human_todos = max_bitmask - flowval
 
-    if minutenum > TIME:
-        return 0
+        elephant_flow = mfr("AA", 26, human_todos, flowrates, distances, good_valves)
+        human_flow = mfr("AA", 26, elephant_todos, flowrates, distances, good_valves)
+        best_flow = max(best_flow, elephant_flow + human_flow)
 
-    nonzero_flows = [f for f in flowrates if flowrates[f] != 0]
-    if len(set(nonzero_flows).difference(set(opened))) == 0: 
-        # Everything that matters is open. 
-        return all_opened_flow * (TIME - minutenum + 1)
+    return best_flow
 
-    children = graph[current]
-    options = []
-    # move to next valve
-    for c in children:
-        opt = mfr(c, minutenum + 1, tuple(opened), graph, flowrates)
-        options.append(opt)
 
-    # if closed, open the valve
-    if current not in opened and flowrates[current] != 0:
-        o = opened.copy()
-        o.append(current)
-        o.sort()
-        next = mfr(current, minutenum + 1, tuple(o), graph, flowrates)
-        options.append(next)
 
-    ans = max(options) + all_opened_flow
-    mfr_arr[(current, minutenum, tuple(opened))] = ans
-    return ans
-
-mfr_elephant_arr = {}
-def mfr_elephant(current_human, current_elephant, minutenum, \
-    opened, graph, flowrates):
-    if (current_human, current_elephant, minutenum, opened) \
-        in mfr_elephant_arr:
-        return mfr_elephant_arr[(current_human, current_elephant, \
-            minutenum, opened)]
-    if (current_elephant, current_human, minutenum, opened) \
-        in mfr_elephant_arr:
-        return mfr_elephant_arr[(current_elephant, current_human, \
-            minutenum, opened)]
-    
-    if minutenum > 26:
-        return 0
-
-    opened = list(opened)
-    all_opened_flow = sum([flowrates[o] for o in opened])
-    nonzero_flows = [f for f in flowrates if flowrates[f] != 0]
-    if len(set(nonzero_flows).difference(set(opened))) == 0: 
-        # Everything that matters is open. 
-        return all_opened_flow * (26 - minutenum + 1)
-    
-    options = []
-    
-    # both skip, elephant only, human only, both turn. 
-    
-    # both skip:
-    for h_c in graph[current_human]:
-        for e_c in graph[current_elephant]:
-            both_skip = mfr_elephant(h_c, e_c, minutenum+1, tuple(opened), \
-                                     graph, flowrates)
-            options.append(both_skip)
-
-    # elephant skips, human opens (if human can open)
-    if current_human not in opened and flowrates[current_human] != 0:
-        o = opened.copy()
-        o.append(current_human)
-        o.sort()
-        for e_c in graph[current_elephant]:
-            esho = mfr_elephant(current_human, e_c, minutenum+1, tuple(o),\
-                                graph, flowrates)
-            options.append(esho)
-
-    # human skips, elephant opens. 
-    if current_elephant not in opened and flowrates[current_elephant] != 0:
-        o = opened.copy()
-        o.append(current_elephant)
-        o.sort()
-        for h_c in graph[current_human]:
-            eohs = mfr_elephant(h_c, current_elephant, minutenum+1, tuple(o),\
-                                graph, flowrates)
-            options.append(eohs)
-    
-    # both open
-    if current_elephant not in opened and flowrates[current_elephant] != 0 and \
-        current_human not in opened and flowrates[current_human] != 0 and \
-        current_human != current_elephant: # can't have both open the same thing. 
-        o = opened.copy()
-        o.append(current_elephant)
-        o.append(current_human)
-        o.sort()
-        bo = mfr_elephant(current_human, current_elephant, minutenum+1, tuple(o),\
-                          graph, flowrates)
-        options.append(bo)
-
-    # print(current_human, current_elephant)
-    ans = max(options) + all_opened_flow
-
-    mfr_elephant_arr[(current_human, current_elephant, minutenum, tuple(opened))] = ans
-    # print(current_human, current_elephant, minutenum, opened, ans)
-    return ans
 
