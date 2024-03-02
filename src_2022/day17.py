@@ -49,11 +49,13 @@ def simulate(input, length):
     inputindex = 0
     tetris = set()
     height = 0
+    historical_height = []
+    cycle_start = None
     for i in range(length):
+        historical_height.append(height)
         piece = PIECES[i % len(PIECES)]
         # shift piece into correct position
         piece = set([p + C(3, height+4) for p in piece])
-        # printTetris(tetris, piece)
 
         stuck = False
         while not stuck:
@@ -64,10 +66,28 @@ def simulate(input, length):
             if down_piece == piece:
                 stuck = True
                 tetris = tetris.union(piece)
-                # printTetris(tetris, set())
             piece = down_piece
             
         height = max(height, max([p.imag for p in tetris]))
+        # printTetris(tetris, piece)
+
+        # UPDATE HEIGHT
+        height = max(height, max([p.imag for p in tetris]))
+        
+        # print top row
+        toprow = [p for p in tetris if p.imag == height]
+        if len(toprow) == 7: # we have found a cycle! 
+            # print(toprow)
+            if cycle_start is None:
+                cycle_start = i
+            elif (cycle_start % len(PIECES)) == (i % len(PIECES)):
+                cycle_length = i - cycle_start
+                cycle_height = height - historical_height[cycle_start]
+                ncycles = (length - cycle_start) // cycle_length 
+                height = (cycle_height * ncycles) + \
+                    historical_height[length - (ncycles * cycle_length)]
+                return height
+
 
     return height
 
@@ -76,5 +96,6 @@ def p1(input):
 
 def p2(input):
     return simulate(input, 1000000000000)
+    return 1
 
 
