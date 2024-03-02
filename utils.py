@@ -17,6 +17,30 @@ def split_and_strip(filecontents):
         lines.pop()
     return lines
 
+### If using bitmasks, I guess. 
+
+# b = the bitmask to turn into a set
+# elements = the elements that the bitmask represents [values] in order
+def bitmask_to_set(b, elements):
+    s = set()
+    n = len(elements)
+    for i in range(n):
+        # &ing with 1 gets us the rightmost digit
+        if b & 1:
+            s.add(elements[i])
+        b >>= 1
+    return s
+
+# s = the set to turn into a bitmask
+# elements = the elements that the bitmask represents [values] in order
+def set_to_bitmask(s, elements):
+    n = len(elements)
+    b = 0
+    for i in range(n):
+        if elements[i] in s:
+            b += 2**i
+    return b
+
 ### Frequently used algorithms
 def lcm(a, b):
     return abs(a*b) // math.gcd(a, b)
