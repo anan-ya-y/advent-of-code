@@ -10,11 +10,6 @@ PIECES = [
     set([C(0, 0), C(0, 1), C(1, 0), C(1, 1)])
 ]
 
-def getHeight(tetris):
-    if len(tetris) == 0:
-        return 0
-    return int(max([t.imag for t in tetris]))
-
 def movePiece(piece, direction, tetris):
     if direction == ">":
         dir = C(1, 0)
@@ -53,10 +48,11 @@ def printTetris(tetris, piece):
 def simulate(input, length):
     inputindex = 0
     tetris = set()
+    height = 0
     for i in range(length):
         piece = PIECES[i % len(PIECES)]
         # shift piece into correct position
-        piece = set([p + C(3, getHeight(tetris)+4) for p in piece])
+        piece = set([p + C(3, height+4) for p in piece])
         # printTetris(tetris, piece)
 
         stuck = False
@@ -70,8 +66,10 @@ def simulate(input, length):
                 tetris = tetris.union(piece)
                 # printTetris(tetris, set())
             piece = down_piece
+            
+        height = max(height, max([p.imag for p in tetris]))
 
-    return getHeight(tetris)
+    return height
 
 def p1(input):
     return simulate(input, 2022)
