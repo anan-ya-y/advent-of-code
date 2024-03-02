@@ -152,15 +152,16 @@ def dikjstra_with_neighbors(vertex_labels: list, neighbors:dict, \
 # RUNS REALLY SLOWLY COMPARED TO BFS IMPLEMENTATION, NOT SURE WHY.
 def reachability(start_vertex, neighbors: dict):
     # use bfs
-    q = [start_vertex]
-    visited = set()
-    while len(q) > 0:
-        u = q.pop(0)
-        visited.add(u)
-        for v in neighbors[u]:
-            if v not in visited:
-                q.append(v)
-    return visited
+    # q = [start_vertex]
+    # visited = set()
+    # while len(q) > 0:
+    #     u = q.pop(0)
+    #     visited.add(u)
+    #     for v in neighbors[u]:
+    #         if v not in visited:
+    #             q.append(v)
+    # return visited
+    return bfs_with_neighbors(neighbors.keys(), neighbors, start_vertex, None)
 
 # Returns length of shortest path from start_vertex to target
 # if target is None, returns dict of shortest paths lengths to all vertices.
