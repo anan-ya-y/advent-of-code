@@ -67,5 +67,5 @@ def p2(input):
         regular_scenic = np.rot90(rotated_scenic, -i)
         scenic_scores *= regular_scenic
 
-    print(scenic_scores)
+    # print(scenic_scores)
     return np.max(scenic_scores)

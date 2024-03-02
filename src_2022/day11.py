@@ -79,7 +79,7 @@ def p2(input):
     monkey_divisibility = 1
     for m in monkeys:
         monkey_divisibility *= monkeys[m].div
-    print(monkey_divisibility)
+    # print(monkey_divisibility)
 
     niterations = int(1e4)
     for n in range(niterations):
@@ -90,8 +90,8 @@ def p2(input):
                 monkeys[loc].items.append(item)
         # print([m.items for m in monkeys.values()])
         # print("---")
-        if n+1 in [1, 20, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000]:
-            print(n+1, [m.nitems_inspected for m in monkeys.values()])
+        # if n+1 in [1, 20, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000]:
+            # print(n+1, [m.nitems_inspected for m in monkeys.values()])
     
     monkey_inspections = [m.nitems_inspected for m in monkeys.values()]
     max_monkeys = max(monkey_inspections)
