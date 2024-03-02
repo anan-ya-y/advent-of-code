@@ -36,9 +36,9 @@ def bitmask_to_set(b, elements):
 def set_to_bitmask(s, elements):
     n = len(elements)
     b = 0
-    for i in range(n):
-        if elements[i] in s:
-            b += 2**i
+    for i in range(n-1, -1, -1):
+        b <<= 1
+        b |= (elements[i] in s)
     return b
 
 ### Frequently used algorithms
