@@ -51,9 +51,8 @@ def p2(input):
                  [l[5], 0, l[6], 0]]
         
         geodes = reuse[bpnum]
-        print(bpnum, len(geodes.keys()))
         g = get_geodes(costs, [1, 0, 0, 0], [0, 0, 0, 0], 32)
-        print(bpnum, len(geodes.keys()), g)
+        # print(bpnum, len(geodes.keys()), g)
         m *= g
 
     return m
