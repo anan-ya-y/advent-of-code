@@ -1,4 +1,12 @@
-import re, utils
+import re, utils, math
+
+GEODE = 3
+OBSIDIAN = 2
+CLAY = 1
+ORE = 0
+INGREDIENTS = [ORE, CLAY, OBSIDIAN, GEODE]
+ROBOTS_NEEDED = [[ORE], [ORE], [ORE, CLAY], [ORE, OBSIDIAN]]
+    # robots_needed[type] is the list of ingredients needed to make type
 
 geodes = {}
 reuse = {}
@@ -12,11 +20,14 @@ def p1(input):
     for l in lines:
         l = [int(i) for i in l]
         bpnum = l[0]
-        costs = [l[1], l[2], (l[3], l[4]), (l[5], l[6])]
+        costs = [[l[1], 0, 0, 0], 
+                 [l[2], 0, 0, 0], 
+                 [l[3], l[4], 0, 0],
+                 [l[5], 0, l[6], 0]]
 
         geodes = {}
         g = get_geodes(costs, [1, 0, 0, 0], [0, 0, 0, 0], 24)
-        print(bpnum, len(geodes.keys()), g)
+        # print(bpnum, len(geodes.keys()), g)
         s += bpnum * g
 
         if bpnum <= 3:
@@ -26,6 +37,7 @@ def p1(input):
 
 
 def p2(input):
+    return 1
     global geodes
     input = utils.split_lines(input)
     lines = [re.findall("\d+", i) for i in input]
@@ -38,7 +50,7 @@ def p2(input):
         
         geodes = reuse[bpnum]
         print(bpnum, len(geodes.keys()))
-        g = get_geodes(costs, [1, 0, 0, 0], [0, 0, 0, 0], 32)
+        g = get_geodes(costs, [1, 0, 0, 0], [0, 0, 0, 0], 24)
         print(bpnum, len(geodes.keys()), g)
         m *= g
 
@@ -46,6 +58,7 @@ def p2(input):
 
 def get_geodes(costs, robots, supply, time_left):
     tuple_index = tuple(robots + supply + [time_left])
+    # print(costs, tuple_index)
     # tuple_index = tuple([robots + supply + time_left])
     if tuple_index in geodes:
         # print(tuple_index, "found in geodes")
@@ -57,47 +70,55 @@ def get_geodes(costs, robots, supply, time_left):
         return supply[-1]
         
     max_spend = [
-        max(costs[0], costs[1], costs[2][0], costs[3][0]), 
-        costs[2][1], 
-        costs[3][1]
-    ] # max amount you can spend of each, per round. 
-    def cap_supply(supply):
-        # return supply
-        return [min(supply[i], max_spend[i]*time_left) for i in range(3)] + [supply[-1]]
+        max([costs[i][ORE] for i in INGREDIENTS]), 
+        max([costs[i][CLAY] for i in INGREDIENTS]),
+        max([costs[i][OBSIDIAN] for i in INGREDIENTS]),
+        99999
+    ] # max amount you can spend of each, per round.
+    supplycaps = [(max_spend[i]*time_left) for i in range(4)]
         
-    # robots just build
-    just_build = cap_supply(list(map(sum, zip(robots, supply))))
+    # calculate what to build next
 
-    # do not build anything
-    best_geodes = get_geodes(costs, robots, just_build, time_left-1)
+    best_geodes = 0 # best amount of geodes we can get
 
-    # build a geode robot 
-    if supply[0] >= costs[3][0] and supply[2] >= costs[3][1]:
-        new_robots = list(map(sum, zip(robots, [0, 0, 0, 1])))
-        new_supply = list(map(sum, zip(just_build, [-costs[3][0], 0, -costs[3][1], 0])))
-        new_supply = cap_supply(new_supply)
-        best_geodes = max(best_geodes, get_geodes(costs, new_robots, new_supply, time_left-1))
-    
-    # build an obsidian robot
-    if supply[0] >= costs[2][0] and supply[1] >= costs[2][1]:
-        new_robots = list(map(sum, zip(robots, [0, 0, 1, 0])))
-        new_supply = list(map(sum, zip(just_build, [-costs[2][0], -costs[2][1], 0, 0])))
-        new_supply = cap_supply(new_supply)
-        best_geodes = max(best_geodes, get_geodes(costs, new_robots, new_supply, time_left-1))
-    
-    # build a clay robot
-    if supply[0] >= costs[1] and robots[1] < max_spend[1]:
-        new_robots = list(map(sum, zip(robots, [0, 1, 0, 0])))
-        new_supply = list(map(sum, zip(just_build, [-costs[1], 0, 0, 0])))
-        new_supply = cap_supply(new_supply)
-        best_geodes = max(best_geodes, get_geodes(costs, new_robots, new_supply, time_left-1))
+    # build no more, forever. 
+    best_geodes = supply[GEODE] + (time_left * robots[GEODE])
 
-    # build an ore robot
-    if supply[0] >= costs[0] and robots[0] < max_spend[0]:
-        new_robots = list(map(sum, zip(robots, [1, 0, 0, 0])))
-        new_supply = list(map(sum, zip(just_build, [-costs[0], 0, 0, 0])))
-        new_supply = cap_supply(new_supply)
-        best_geodes = max(best_geodes, get_geodes(costs, new_robots, new_supply, time_left-1))
-    
+    for robot_type in INGREDIENTS:
+        if robots[robot_type] >= max_spend[robot_type]:
+            continue # making more per round than we can use
+
+        if not all([robots[i] > 0 for i in ROBOTS_NEEDED[robot_type]]):
+            continue # we don't have enough robots to make this. 
+
+        churn_time = 0
+        for i in ROBOTS_NEEDED[robot_type]:
+            churn_time = max(churn_time, 
+                             math.ceil((costs[robot_type][i] - supply[i]) / robots[i]))
+        
+        if churn_time + 1 > time_left:  
+            continue
+
+        # churn for churn_time
+        # new_supply = [supply[i] + robots[i] *(churn_time+1) 
+        #                 for i in INGREDIENTS]
+
+        # build the robot
+        new_robots = [robots[i] + (1 if i == robot_type else 0) 
+                        for i in INGREDIENTS]
+        # new_supply = [min(new_supply[i] - costs[robot_type][i], 
+        #                     supplycaps[i]) 
+        #                 for i in INGREDIENTS]
+
+        new_supply = [min(supplycaps[i], 
+                        supply[i] + robots[i] * (churn_time+1) - costs[robot_type][i]) 
+                        for i in INGREDIENTS]
+
+        x = get_geodes(costs, new_robots, new_supply, time_left - churn_time - 1)
+        best_geodes = max(best_geodes, x)
+
     geodes[tuple_index] = best_geodes
+    # print(tuple_index, best_geodes)
     return best_geodes
+
+    
