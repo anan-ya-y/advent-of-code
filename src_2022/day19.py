@@ -1,8 +1,10 @@
 import re, utils
 
 geodes = {}
+reuse = {}
 def p1(input):
     global geodes
+    global reuse
     input = utils.split_lines(input)
     lines = [re.findall("\d+", i) for i in input]
 
@@ -16,11 +18,31 @@ def p1(input):
         g = get_geodes(costs, [1, 0, 0, 0], [0, 0, 0, 0], 24)
         print(bpnum, len(geodes.keys()), g)
         s += bpnum * g
+
+        if bpnum <= 3:
+            reuse[bpnum] = geodes.copy()
+
     return s
 
 
 def p2(input):
-    pass
+    global geodes
+    input = utils.split_lines(input)
+    lines = [re.findall("\d+", i) for i in input]
+
+    m = 1
+    for i in range(3):
+        l = [int(i) for i in lines[i]]
+        bpnum = l[0]
+        costs = [l[1], l[2], (l[3], l[4]), (l[5], l[6])]
+        
+        geodes = reuse[bpnum]
+        print(bpnum, len(geodes.keys()))
+        g = get_geodes(costs, [1, 0, 0, 0], [0, 0, 0, 0], 32)
+        print(bpnum, len(geodes.keys()), g)
+        m *= g
+
+    return m
 
 def get_geodes(costs, robots, supply, time_left):
     tuple_index = tuple(robots + supply + [time_left])
@@ -33,11 +55,7 @@ def get_geodes(costs, robots, supply, time_left):
     
     if time_left <= 0:
         return supply[-1]
-    
-    # if we have no time to make a geode robot
-    # if time_left < costs[3][1] and robots[2] == 0:
-    #     return 0
-    
+        
     max_spend = [
         max(costs[0], costs[1], costs[2][0], costs[3][0]), 
         costs[2][1], 
