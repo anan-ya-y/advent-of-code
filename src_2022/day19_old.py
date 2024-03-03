@@ -26,7 +26,6 @@ def p1(input):
 
 
 def p2(input):
-    return 1
     global geodes
     input = utils.split_lines(input)
     lines = [re.findall("\d+", i) for i in input]

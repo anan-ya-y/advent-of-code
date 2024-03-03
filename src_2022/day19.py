@@ -37,7 +37,6 @@ def p1(input):
 
 
 def p2(input):
-    return 1
     global geodes
     input = utils.split_lines(input)
     lines = [re.findall("\d+", i) for i in input]
@@ -46,11 +45,14 @@ def p2(input):
     for i in range(3):
         l = [int(i) for i in lines[i]]
         bpnum = l[0]
-        costs = [l[1], l[2], (l[3], l[4]), (l[5], l[6])]
+        costs = [[l[1], 0, 0, 0], 
+                 [l[2], 0, 0, 0], 
+                 [l[3], l[4], 0, 0],
+                 [l[5], 0, l[6], 0]]
         
         geodes = reuse[bpnum]
         print(bpnum, len(geodes.keys()))
-        g = get_geodes(costs, [1, 0, 0, 0], [0, 0, 0, 0], 24)
+        g = get_geodes(costs, [1, 0, 0, 0], [0, 0, 0, 0], 32)
         print(bpnum, len(geodes.keys()), g)
         m *= g
 
