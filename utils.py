@@ -11,8 +11,8 @@ def read_file(filename):
 def split_lines(filecontents):
     return filecontents.split("\n")
 
-def split_and_strip(filecontents):
-    lines = [l.strip() for l in filecontents.split("\n")]
+def split_and_strip(filecontents, character="\n"):
+    lines = [l.strip() for l in filecontents.split(character)]
     if lines[-1] == "":
         lines.pop()
     return lines
