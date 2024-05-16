@@ -62,6 +62,7 @@ def get_grid_str(blizzards, cp=None):
 def p1(input):
     blizzards = read_input(input)
 
+    seen = set()
     pos_queue = [(C(0, 1), blizzards.copy(), 0)]
     while pos_queue:
         # pull from q, move blizzards, check if we are done
@@ -70,6 +71,9 @@ def p1(input):
         # print(pos, length)
         if pos == end_pos:
             return length
+        if get_grid_str(blizzards, pos) in seen:
+            continue
+        seen.add(get_grid_str(blizzards, pos))
         
         new_blizzards = move_blizzards(blizzards)
         bz = set([x[0] for x in new_blizzards])
