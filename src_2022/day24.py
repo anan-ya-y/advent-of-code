@@ -28,6 +28,7 @@ def read_input(input):
     end_pos = C(dims[0]-1, dims[1]-2)
     return blizzards
 
+# === OLD VERSION === 
 def move_blizzards(blizzards):
     new_blizzards = set()
     for pos, direction in blizzards:
@@ -85,18 +86,19 @@ def find_path(blizzards, start, goal):
             if new_pos not in walls and new_pos not in bz:
                 pos_queue.append((new_pos, new_blizzards.copy(), length+1))
 
+# === NEW VERSION ===
 def find_path_new(blizzards, start, goal): # this is bfs. 
     pos_queue = [(start, 0)]
     seen = set()
-    cycle_val = utils.lcm(dims[0], dims[1])
+    cycle_val = utils.lcm(dims[0]-2, dims[1]-2)
     while pos_queue:
         q = pos_queue.pop(0)
         pos, time = q
         if pos == goal:
             return time 
-        if (pos, time%cycle_val) in seen:
+        if (pos, time % cycle_val) in seen:
             continue
-        seen.add((pos, time%cycle_val))
+        seen.add((pos, time % cycle_val))
         
         for direction in directions.values():
             new_pos = pos + direction
@@ -131,6 +133,8 @@ def fastforward_blizzards(blizzards, time):
                     1+((new_pos.imag-1) % (dims[1]-2)))
         new_blizzards.add((new_pos, direction))
     return new_blizzards
+
+# === RUN STUFF ===
 
 def p1(input):
     blizzards = read_input(input)
