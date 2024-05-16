@@ -57,20 +57,16 @@ def get_grid_str(blizzards, cp=None):
         grid += "\n"
     return grid
 
-
-
-def p1(input):
-    blizzards = read_input(input)
-
+def find_path(blizzards, start, goal):
     seen = set()
-    pos_queue = [(C(0, 1), blizzards.copy(), 0)]
+    pos_queue = [(start, blizzards.copy(), 0)]
     while pos_queue:
         # pull from q, move blizzards, check if we are done
         q = pos_queue.pop(0)
         pos, blizzards, length = q
         # print(pos, length)
-        if pos == end_pos:
-            return length
+        if pos == goal:
+            return length, blizzards
         if get_grid_str(blizzards, pos) in seen:
             continue
         seen.add(get_grid_str(blizzards, pos))
@@ -88,5 +84,18 @@ def p1(input):
             if new_pos not in walls and new_pos not in bz:
                 pos_queue.append((new_pos, new_blizzards.copy(), length+1))
 
+def p1(input):
+    blizzards = read_input(input)
+    return find_path(blizzards, C(0, 1), end_pos)[0]
+
 def p2(input):
-    return 0
+    blizzards = read_input(input)
+    start_pos = C(0, 1)
+    end_pos = C(dims[0]-1, dims[1]-2)
+
+    # there can definitely be cacheing done but idc
+    p1, blizzards = find_path(blizzards, start_pos, end_pos)
+    p2, blizzards = find_path(blizzards, end_pos, start_pos)
+    p3, blizzards = find_path(blizzards, start_pos, end_pos)
+
+    return p1+p2+p3
