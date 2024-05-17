@@ -13,9 +13,9 @@ def subset_sum(nums, target_sum):
     if sum(nums) < target_sum:
         return False, []
     
-    # repn = (tuple(nums), target_sum)
-    # if repn in sstn:
-    #     return sstn[repn]
+    repn = (tuple(nums), target_sum)
+    if repn in sstn:
+        return sstn[repn]
     
     use, use_set = subset_sum(nums[1:], target_sum - n)
     dont_use, dont_use_set = subset_sum(nums[1:], target_sum)
@@ -33,10 +33,10 @@ def subset_sum(nums, target_sum):
     elif dont_use and not use:
         ans = dont_use_set
     else:
-        # sstn[repn] = False, []
+        sstn[repn] = False, []
         return False, []
     
-    # sstn[repn] = use or dont_use, ans
+    sstn[repn] = use or dont_use, ans
     return use or dont_use, ans
 
 def p1(input):
@@ -53,7 +53,7 @@ def p1(input):
 def p2(input):
     nums = list(map(int, utils.split_and_strip(input)))
     nums.sort(reverse=True)
-    
+
     target_sum = sum(nums) // 4
 
     _, nums = subset_sum(nums, target_sum)
