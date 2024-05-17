@@ -34,12 +34,12 @@ def run_day(year, day, sample=False):
     input = get_input_string(filename)
 
     p1_stime = time.time()
-    p1_ans = int(m.p1(input))
+    p1_ans = m.p1(input)
     p1_etime = time.time()
     print("Part 1:\t", p1_ans, "\t", round(p1_etime-p1_stime, 5), "s")
 
     p2_stime = time.time()
-    p2_ans = int(m.p2(input))
+    p2_ans = m.p2(input)
     p2_etime = time.time()
     print("Part 2:\t", p2_ans, "\t", round(p2_etime-p2_stime, 5), "s")
 
