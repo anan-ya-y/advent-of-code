@@ -51,4 +51,11 @@ def p1(input):
 
 
 def p2(input):
-    return -11
+    nums = list(map(int, utils.split_and_strip(input)))
+    nums.sort(reverse=True)
+    
+    target_sum = sum(nums) // 4
+
+    _, nums = subset_sum(nums, target_sum)
+
+    return reduce(lambda x, y: x * y, nums)
