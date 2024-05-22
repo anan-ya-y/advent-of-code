@@ -234,10 +234,10 @@ def bfs(vertex_labels, edge_function, start_vertex, target):
     return bfs_with_neighbors(vertex_labels, neighbors, start_vertex, target)
 
 # Returns length of shortest path from start_vertex to target. 
-# if target is None, returns dict of shortest paths lengths to all vertices. 
+# if target is None, returns dict of shortest path lengths to all other states. 
 # vertex_labels: list of vertices (YOUR labels)
-# neighbors: dict of vertex: list of neighbors
-def bfs_with_neighbors(vertex_labels:list, neighbors:dict, start_vertex, target=None):
+# neighbor_generator: function that takes input vertex outputs list of all possible neighbors
+def bfs_with_neighbor_generator(vertex_labels, neighbor_generator, start_vertex, target=None):
     q = [(start_vertex, 0)]
     dists = {}
 
@@ -250,13 +250,41 @@ def bfs_with_neighbors(vertex_labels:list, neighbors:dict, start_vertex, target=
         dists[u] = d
         if u == target:
             return dists[u]
-        for v in neighbors[u]:
+        for v in neighbor_generator(u):
             if v not in dists:
                 q.append((v, d+1))
 
     if target is None:
         return dists
-    return -1 # no path from start_vertex to target
+    return -1
+
+# Returns length of shortest path from start_vertex to target. 
+# if target is None, returns dict of shortest paths lengths to all vertices. 
+# vertex_labels: list of vertices (YOUR labels)
+# neighbors: dict of vertex: list of neighbors
+def bfs_with_neighbors(vertex_labels:list, neighbors:dict, start_vertex, target=None):
+    def neighbor_fn(x):
+        return neighbors[x]
+    return bfs_with_neighbor_generator(vertex_labels, neighbor_fn, start_vertex, target)
+    # q = [(start_vertex, 0)]
+    # dists = {}
+
+    # while len(q) > 0:
+    #     u, d = q.pop(0)
+
+    #     if u in dists:
+    #         continue
+
+    #     dists[u] = d
+    #     if u == target:
+    #         return dists[u]
+    #     for v in neighbors[u]:
+    #         if v not in dists:
+    #             q.append((v, d+1))
+
+    # if target is None:
+    #     return dists
+    # return -1 # no path from start_vertex to target
 
 def dfs(vertex_labels, edge_function, start_vertex, target):
     q = [(start_vertex, 0)]
