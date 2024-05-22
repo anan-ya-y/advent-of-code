@@ -40,5 +40,10 @@ def p2(input):
     def neighbor_generator_reverse(u):
         return get_possible_onesteps(u, reverse_convs)
     
-    k = utils.bfs_with_neighbor_generator(neighbor_generator_reverse, input_str, "e")
+    def priority_fn(u):
+        return len(u)
+    
+    k = utils.bfs_with_neighbor_generator(neighbor_generator_reverse, \
+                                            input_str, "e", \
+                                            priorityfn=priority_fn)
     return k 

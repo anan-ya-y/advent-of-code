@@ -1,6 +1,7 @@
 import math
 from queue import PriorityQueue
 from functools import reduce
+import heapq
 
 def read_file(filename):
     with open(filename, 'r') as f:
@@ -236,12 +237,19 @@ def reachability(start_vertex, neighbors: dict):
 # Returns length of shortest path from start_vertex to target. 
 # if target is None, returns dict of shortest path lengths to all other states. 
 # neighbor_generator: function that takes input vertex outputs list of all possible neighbors
-def bfs_with_neighbor_generator(neighbor_generator, start_vertex, target=None):
-    q = [(start_vertex, 0)]
+def bfs_with_neighbor_generator(neighbor_generator, start_vertex, target=None, priorityfn=None):
+    # q = [(start_vertex, 0)]
+    q = PriorityQueue()
+    queue_counter = 0 # pq tiebreaker. 
+    q.put((1 if priorityfn is None else priorityfn(start_vertex), \
+           queue_counter, start_vertex, 0))
+    queue_counter += 1 
     dists = {}
 
-    while len(q) > 0:
-        u, d = q.pop(0)
+    # while len(q) > 0:
+    while not q.empty():
+        # u, d = q.pop(0)
+        _, _, u, d = q.get()
 
         if u in dists:
             continue
@@ -251,7 +259,10 @@ def bfs_with_neighbor_generator(neighbor_generator, start_vertex, target=None):
             return dists[u]
         for v in neighbor_generator(u):
             if v not in dists:
-                q.append((v, d+1))
+                # q.append((v, d+1))
+                q.put((1 if priorityfn is None else priorityfn(v), \
+                       queue_counter, v, d+1))
+                queue_counter += 1
 
     if target is None:
         return dists
