@@ -1,5 +1,6 @@
 import math
 from queue import PriorityQueue
+from functools import reduce
 
 def read_file(filename):
     with open(filename, 'r') as f:
@@ -62,6 +63,58 @@ def from_base_n(num, n):
         num //= 10
     return ans
 
+def is_prime(n):
+    if n == 1:
+        return False
+    if n == 2:
+        return True
+    for i in range(2, math.ceil(math.sqrt(n)+1)):
+        if n % i == 0:
+            return False
+    return True
+
+def prime_factorize(n):
+    if n == 1:
+        return []
+    
+    factors = []
+    i = 2
+    while n > 1:
+        if n % i == 0:
+            n //= i
+            factors.append(i)
+        else:
+            i += 1
+
+    return factors
+
+def number_of_divisors(n):
+    from collections import Counter
+    import operator
+    prime_factors = prime_factorize(n)
+    if prime_factors == []:
+        return 1
+    pf_counts = Counter(prime_factors).values()
+    return reduce(operator.mul, map(lambda x: (x+1), pf_counts))
+
+def sum_of_divisors(n):
+    from collections import Counter
+    import operator
+    prime_factors = prime_factorize(n)
+    if prime_factors == []:
+        return 1
+    pf_vals = Counter(prime_factors).keys()
+    pf_counts = Counter(prime_factors).values()
+    s = 1
+    for val, count in zip(pf_vals, pf_counts):
+        s *= (val**(count+1)-1)/(val-1)
+    return s
+
+def product_of_divisors(n):
+    num_factors = number_of_divisors(n)
+    if num_factors % 2 == 0:
+        return n ** (num_factors // 2)
+    return math.sqrt(n) * (n ** (num_factors // 2))
 
 # Binary sorts an array. 
 # comparator takes inputs (a, b) and returns True if a > b
