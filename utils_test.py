@@ -96,3 +96,7 @@ def test_bfs():
     assert x['E'] == 3
     assert x['F'] == 2
     assert utils.bfs_with_neighbors(graph, 'A', 'D') == -1
+
+# def test_past_comps():
+#     import subprocess
+
