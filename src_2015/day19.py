@@ -29,11 +29,16 @@ def p1(input):
     convs, input_str = process_input(input)
     return len(get_possible_onesteps(input_str, convs))
 
-
 def p2(input):
     convs, input_str = process_input(input)
     def neighbor_generator(u):
-        # print(u)
         return get_possible_onesteps(u, convs)
-    k = utils.bfs_with_neighbor_generator(neighbor_generator, "e", input_str)
+    # return utils.bfs_with_neighbor_generator(neighbor_generator, "e", input_str)
+
+    reverse_convs = [(v, u) for (u, v) in convs]
+
+    def neighbor_generator_reverse(u):
+        return get_possible_onesteps(u, reverse_convs)
+    
+    k = utils.bfs_with_neighbor_generator(neighbor_generator_reverse, input_str, "e")
     return k 
