@@ -116,6 +116,15 @@ def product_of_divisors(n):
         return n ** (num_factors // 2)
     return math.sqrt(n) * (n ** (num_factors // 2))
 
+def get_divisors(n):
+    divisors = []
+    for i in range(1, math.ceil(math.sqrt(n)+1)):
+        if n % i == 0:
+            divisors.append(i)
+            divisors.append(n // i)
+    divisors.sort()
+    return divisors
+
 # Binary sorts an array. 
 # comparator takes inputs (a, b) and returns True if a > b
 # sorts in increasing order. arr[0] is the smallest element. 
