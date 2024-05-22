@@ -77,3 +77,22 @@ def test_num_sum_prod_divisors():
         assert utils.sum_of_divisors(i) == sum
         if i < 899: # numbers get too big
             assert utils.product_of_divisors(i) == prod
+
+def test_bfs():
+    graph = {
+        'A': ['B', 'C'],
+        'B': ['F'],
+        'C': ['F'],
+        'D': [],
+        'E': ['F'],
+        'F': ['E']
+    }
+
+    x = utils.bfs_with_neighbors(graph, 'A')
+    assert x['A'] == 0
+    assert x['B'] == 1
+    assert x['C'] == 1
+    assert 'D' not in x 
+    assert x['E'] == 3
+    assert x['F'] == 2
+    assert utils.bfs_with_neighbors(graph, 'A', 'D') == -1

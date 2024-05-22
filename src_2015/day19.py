@@ -35,5 +35,5 @@ def p2(input):
     def neighbor_generator(u):
         # print(u)
         return get_possible_onesteps(u, convs)
-    k = utils.bfs_with_neighbor_generator([], neighbor_generator, "e", input_str)
+    k = utils.bfs_with_neighbor_generator(neighbor_generator, "e", input_str)
     return k 

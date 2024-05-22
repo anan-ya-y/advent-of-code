@@ -20,7 +20,7 @@ def compress_graph(graph, flowrates):
     good_valves = [v for v in flowrates if flowrates[v] != 0] + ["AA"]
     distances = {}
     for v1 in good_valves:
-        v1dists = utils.bfs_with_neighbors(graph.keys(), graph, v1, None)
+        v1dists = utils.bfs_with_neighbors(graph, v1, None)
         for v2 in good_valves:
             distances[(v1, v2)] = v1dists[v2]
 

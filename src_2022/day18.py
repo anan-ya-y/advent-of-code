@@ -75,7 +75,7 @@ def p2(input):
     holes = []
 
     # reachable_from_outside = utils.reachability(outside, edges)
-    reachable_from_outside = utils.bfs_with_neighbors(edges.keys(), edges, outside, None)
+    reachable_from_outside = utils.bfs_with_neighbors(edges, outside, None)
     for x in range(min_x, max_x+1):
         for y in range(min_y, max_y+1):
             for z in range(min_z, max_z+1):

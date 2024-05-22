@@ -225,19 +225,18 @@ def reachability(start_vertex, neighbors: dict):
     # return visited
     return bfs_with_neighbors(neighbors.keys(), neighbors, start_vertex, None)
 
-# Returns length of shortest path from start_vertex to target
-# if target is None, returns dict of shortest paths lengths to all vertices.
-# vertex_labels: list of vertices (YOUR labels)
-# edge_function: takes in two vertices and returns the edge weight between them.
-def bfs(vertex_labels, edge_function, start_vertex, target):
-    _, neighbors = make_graph(vertex_labels, edge_function)
-    return bfs_with_neighbors(vertex_labels, neighbors, start_vertex, target)
+# # Returns length of shortest path from start_vertex to target
+# # if target is None, returns dict of shortest paths lengths to all vertices.
+# # vertex_labels: list of vertices (YOUR labels)
+# # edge_function: takes in two vertices and returns the edge weight between them.
+# def bfs(vertex_labels, edge_function, start_vertex, target):
+#     _, neighbors = make_graph(vertex_labels, edge_function)
+#     return bfs_with_neighbors(vertex_labels, neighbors, start_vertex, target)
 
 # Returns length of shortest path from start_vertex to target. 
 # if target is None, returns dict of shortest path lengths to all other states. 
-# vertex_labels: list of vertices (YOUR labels)
 # neighbor_generator: function that takes input vertex outputs list of all possible neighbors
-def bfs_with_neighbor_generator(vertex_labels, neighbor_generator, start_vertex, target=None):
+def bfs_with_neighbor_generator(neighbor_generator, start_vertex, target=None):
     q = [(start_vertex, 0)]
     dists = {}
 
@@ -262,10 +261,10 @@ def bfs_with_neighbor_generator(vertex_labels, neighbor_generator, start_vertex,
 # if target is None, returns dict of shortest paths lengths to all vertices. 
 # vertex_labels: list of vertices (YOUR labels)
 # neighbors: dict of vertex: list of neighbors
-def bfs_with_neighbors(vertex_labels:list, neighbors:dict, start_vertex, target=None):
+def bfs_with_neighbors(neighbors:dict, start_vertex, target=None):
     def neighbor_fn(x):
         return neighbors[x]
-    return bfs_with_neighbor_generator(vertex_labels, neighbor_fn, start_vertex, target)
+    return bfs_with_neighbor_generator(neighbor_fn, start_vertex, target)
     # q = [(start_vertex, 0)]
     # dists = {}
 
@@ -286,30 +285,30 @@ def bfs_with_neighbors(vertex_labels:list, neighbors:dict, start_vertex, target=
     #     return dists
     # return -1 # no path from start_vertex to target
 
-def dfs(vertex_labels, edge_function, start_vertex, target):
-    q = [(start_vertex, 0)]
-    visited = set()
-    while len(q) > 0:
-        u, d = q.pop()
-        visited.add(u)
-        if u == target:
-            return d
-        for v in vertex_labels:
-            if v not in visited and edge_function(u, v):
-                q.append((v, d+1))
-    return -1
+# def dfs(vertex_labels, edge_function, start_vertex, target):
+#     q = [(start_vertex, 0)]
+#     visited = set()
+#     while len(q) > 0:
+#         u, d = q.pop()
+#         visited.add(u)
+#         if u == target:
+#             return d
+#         for v in vertex_labels:
+#             if v not in visited and edge_function(u, v):
+#                 q.append((v, d+1))
+#     return -1
 
-# PROBABLY DOESN'T WORK. 
-def longest_cycle(vertex_labels, edge_function, start_vertex):
-    best_dist = -1
-    for v in vertex_labels:
-        if edge_function(v, start_vertex) is not None:
-            print(v)
-            dist = dfs(vertex_labels, edge_function, start_vertex, v)
-            dist += edge_function(v, start_vertex)
-            best_dist = max(best_dist, dist)
+# # PROBABLY DOESN'T WORK. 
+# def longest_cycle(vertex_labels, edge_function, start_vertex):
+#     best_dist = -1
+#     for v in vertex_labels:
+#         if edge_function(v, start_vertex) is not None:
+#             print(v)
+#             dist = dfs(vertex_labels, edge_function, start_vertex, v)
+#             dist += edge_function(v, start_vertex)
+#             best_dist = max(best_dist, dist)
 
-    return best_dist
+#     return best_dist
 
 
 def transpose_string_matrix(input):
