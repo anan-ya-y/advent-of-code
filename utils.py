@@ -1,7 +1,7 @@
 import math
 from queue import PriorityQueue
 from functools import reduce
-import heapq
+import re
 
 def read_file(filename):
     with open(filename, 'r') as f:
@@ -18,6 +18,9 @@ def split_and_strip(filecontents, character="\n"):
     if lines[-1] == "":
         lines.pop()
     return lines
+
+def split_by_whitespace(filecontents):
+    return re.split(r'\s+', filecontents)
 
 ### If using bitmasks, I guess. 
 
