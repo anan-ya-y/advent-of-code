@@ -100,3 +100,13 @@ def test_bfs():
 # def test_past_comps():
 #     import subprocess
 
+def test_n_freqs():
+    assert utils.get_n_most_frequent("aabbcc", 1) == [('a', 2), ('b', 2), ('c', 2)]
+    assert utils.get_n_most_frequent("aabbcc", 2) == [('a', 2), ('b', 2), ('c', 2)]
+    assert utils.get_n_most_frequent("aabbcc", 3) == [('a', 2), ('b', 2), ('c', 2)]
+    assert utils.get_n_most_frequent("aabbcc", 4) == [('a', 2), ('b', 2), ('c', 2)]
+
+    assert utils.get_n_most_frequent("aaabbccdddee", 1) == [('a', 3), ('d', 3)] 
+    assert utils.get_n_most_frequent("aaabbccdddee", 2) == [('a', 3), ('d', 3)] 
+    assert utils.get_n_most_frequent("aaabbccdddee", 3) == [('a', 3), ('d', 3), ('b', 2), ('c', 2), ('e', 2)] 
+    

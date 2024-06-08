@@ -2,6 +2,7 @@ import math
 from queue import PriorityQueue
 from functools import reduce
 import re
+import hashlib
 
 def read_file(filename):
     with open(filename, 'r') as f:
@@ -334,3 +335,34 @@ def transpose_string_matrix(input):
         ans.append(s)
 
     return ans
+
+# returns {item: count}
+def get_frequencies(input):
+    freqs = {}
+    for i in input:
+        if i not in freqs:
+            freqs[i] = 0
+        freqs[i] += 1
+    return freqs
+
+# returns n most frequent as [(item, count)]
+# RETURNS EVERYTHING IF TIES. 
+def get_n_most_frequent(input, n):
+    freqs = get_frequencies(input)
+    freqs = list(freqs.items())
+    freqs.sort(key=lambda x: x[1], reverse=True) # most frequently first
+    
+    ans = []
+    i = 0
+    while i < len(freqs) and len(ans) < n:
+        freq = freqs[i][1]
+        all_in = [x for x in freqs if x[1] == freq]
+        ans.extend(all_in)
+        i += len(all_in)
+    return ans
+
+def get_md5(s):
+    return hashlib.md5(s.encode()).hexdigest()
+
+def get_all_chars_in_squarebrackets(s):
+    return re.findall(r"\[(\w+)\]", s)
