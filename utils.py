@@ -237,11 +237,16 @@ def reachability(start_vertex, neighbors: dict):
 # def bfs(vertex_labels, edge_function, start_vertex, target):
 #     _, neighbors = make_graph(vertex_labels, edge_function)
 #     return bfs_with_neighbors(vertex_labels, neighbors, start_vertex, target)
-
+# priorityfn does smaller numbers first 
+# state_in_list(x, list) returns True if an equivalent state to x is in list. 
 # Returns length of shortest path from start_vertex to target. 
 # if target is None, returns dict of shortest path lengths to all other states. 
 # neighbor_generator: function that takes input vertex outputs list of all possible neighbors
-def bfs_with_neighbor_generator(neighbor_generator, start_vertex, target=None, priorityfn=None):
+def bfs_with_neighbor_generator(neighbor_generator, start_vertex, target=None, \
+                                priorityfn=None, state_in_list=None):
+    if state_in_list is None:
+        state_in_list = lambda x, l: x in l
+
     # q = [(start_vertex, 0)]
     q = PriorityQueue()
     queue_counter = 0 # pq tiebreaker. 
@@ -262,7 +267,7 @@ def bfs_with_neighbor_generator(neighbor_generator, start_vertex, target=None, p
         if u == target:
             return dists[u]
         for v in neighbor_generator(u):
-            if v not in dists:
+            if not state_in_list(v, dists):
                 # q.append((v, d+1))
                 q.put((1 if priorityfn is None else priorityfn(v), \
                        queue_counter, v, d+1))
@@ -299,6 +304,12 @@ def bfs_with_neighbors(neighbors:dict, start_vertex, target=None):
     # if target is None:
     #     return dists
     # return -1 # no path from start_vertex to target
+
+# TODO: Implement this.
+# doesn't use a dict to keep track of visited vertices.
+def bfs_with_sets(neighbor_generator, start_vertex, target, \
+                  priority_fn=None, state_in_list=None):
+    return -1
 
 # def dfs(vertex_labels, edge_function, start_vertex, target):
 #     q = [(start_vertex, 0)]
