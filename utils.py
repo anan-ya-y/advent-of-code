@@ -20,6 +20,9 @@ def split_and_strip(filecontents, character="\n"):
         lines.pop()
     return lines
 
+def ss(filecontents, character="\n"):
+    return split_and_strip(filecontents, character)
+
 def split_by_whitespace(filecontents):
     return re.split(r'\s+', filecontents)
 
