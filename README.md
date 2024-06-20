@@ -1,4 +1,3 @@
-# aoc-2022
+# advent-of-code
 
-My solutions to Advent of Code, 2022
-(done in 2023). 
+My solutions to Advent of Code. 
