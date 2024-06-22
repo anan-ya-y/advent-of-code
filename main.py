@@ -84,15 +84,28 @@ else: # importing all modules
             print("Module not found for day", i)
             continue
 
-if args.all:
-    print("--AoC {}--\n".format(args.year))
-    for i in range(1, len(modules)+1):
-        run_day(args.year, i, args.sample)
-        print()
-else:
 
+if args.all:
+    days = range(1, len(modules)+1)
+    print("--AoC {}--\n".format(args.year))
+else:
+    days = [args.day]
+
+for d in days:
     if args.submit:
-        submit_day(args.year, args.day)
+        submit_day(args.year, d)
     else:
-        run_day(args.year, args.day, args.sample)
+        run_day(args.year, d, args.sample)
+
+# if args.all:
+#     print("--AoC {}--\n".format(args.year))
+#     for i in range(1, len(modules)+1):
+#         run_day(args.year, i, args.sample)
+#         print()
+# else:
+
+#     if args.submit:
+#         submit_day(args.year, args.day)
+#     else:
+#         run_day(args.year, args.day, args.sample)
 
