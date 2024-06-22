@@ -288,57 +288,59 @@ def bfs_with_neighbors(neighbors:dict, start_vertex, target=None):
     def neighbor_fn(x):
         return neighbors[x]
     return bfs_with_neighbor_generator(neighbor_fn, start_vertex, target)
-    # q = [(start_vertex, 0)]
-    # dists = {}
+
+# is_target is a function that takes in a vertex and returns True if it's the target.
+def bfs_return_path(neighbors_generator, start_vertex, target, \
+                    state_in_list=None, priority_fn=None):
+    if state_in_list is None:
+        state_in_list = lambda x, l: x in l
+    if priority_fn is None:
+        priority_fn = lambda x: 1
+
+    q = PriorityQueue()
+    queue_counter = 0 # pq tiebreaker. 
+    q.put((priority_fn(start_vertex), queue_counter, start_vertex, [start_vertex]))
+    queue_counter += 1 
+    visited = set()
 
     # while len(q) > 0:
-    #     u, d = q.pop(0)
+    while not q.empty():
+        # u, path = q.pop(0)
+        _, _, u, path = q.get()
 
-    #     if u in dists:
-    #         continue
+        if state_in_list(u, visited):
+            continue
 
-    #     dists[u] = d
-    #     if u == target:
-    #         return dists[u]
-    #     for v in neighbors[u]:
-    #         if v not in dists:
-    #             q.append((v, d+1))
+        visited.add(u)
+        if u == target:
+            return path
+        for v in neighbors_generator((u, path)):
+            if not state_in_list(v, visited):
+                # q.append((v, path + [v]))
+                q.put((priority_fn(v), queue_counter, v, path + [v]))
+                queue_counter += 1
+        
+    return None
 
-    # if target is None:
-    #     return dists
-    # return -1 # no path from start_vertex to target
+def longest_path_length(neighbors_generator, start_vertex, target, state_in_list):
+    if state_in_list is None:
+        state_in_list = lambda x, l: x in l
 
-# TODO: Implement this.
-# doesn't use a dict to keep track of visited vertices.
-def bfs_with_sets(neighbor_generator, start_vertex, target, \
-                  priority_fn=None, state_in_list=None):
-    return -1
+    q = []
+    q.append((start_vertex, [start_vertex]))
+    longest_path_length = 0
 
-# def dfs(vertex_labels, edge_function, start_vertex, target):
-#     q = [(start_vertex, 0)]
-#     visited = set()
-#     while len(q) > 0:
-#         u, d = q.pop()
-#         visited.add(u)
-#         if u == target:
-#             return d
-#         for v in vertex_labels:
-#             if v not in visited and edge_function(u, v):
-#                 q.append((v, d+1))
-#     return -1
+    while len(q) > 0:
+        u, path = q.pop(0)
 
-# # PROBABLY DOESN'T WORK. 
-# def longest_cycle(vertex_labels, edge_function, start_vertex):
-#     best_dist = -1
-#     for v in vertex_labels:
-#         if edge_function(v, start_vertex) is not None:
-#             print(v)
-#             dist = dfs(vertex_labels, edge_function, start_vertex, v)
-#             dist += edge_function(v, start_vertex)
-#             best_dist = max(best_dist, dist)
-
-#     return best_dist
-
+        if u == target:
+            longest_path_length = max(longest_path_length, len(path))
+        else:
+            for v in neighbors_generator((u, path)):
+                if not state_in_list(v, path):
+                    q.append((v, path + [v]))
+    
+    return longest_path_length-1
 
 def transpose_string_matrix(input):
     ans = []
@@ -377,6 +379,8 @@ def get_n_most_frequent(input, n):
 
 def get_md5(s):
     return hashlib.md5(s.encode()).hexdigest()
+def md5(s):
+    return get_md5(s)
 
 def get_all_chars_in_squarebrackets(s):
     return re.findall(r"\[(\w+)\]", s)
