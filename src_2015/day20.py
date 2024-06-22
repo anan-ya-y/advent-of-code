@@ -22,6 +22,5 @@ def p2(input):
         nchekced += 1
         visiting_elves = [x for x in utils.get_divisors(house_num) if house_num//x < max_houses_per_elf]
         if sum(visiting_elves) * presents_per_elf >= input:
-            print(nchekced)
             return house_num
         house_num += 1

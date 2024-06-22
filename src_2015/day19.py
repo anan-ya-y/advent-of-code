@@ -11,8 +11,9 @@ def process_input(input):
 
     return all_conversions, lines[1]
 
-def get_replacement_indices(key, input):
-    return [m.start() for m in re.finditer('(?=' + key + ')', input)]
+def get_replacement_indices(key, input_str):
+    c = re.compile('(?=' + key + ')')
+    return [m.start() for m in re.finditer(c, input_str)]
 
 def get_possible_onesteps(input_str, convs):
     possible_strings = set()
@@ -32,12 +33,14 @@ def p1(input):
 def p2(input):
     convs, input_str = process_input(input)
     def neighbor_generator(u):
+        u, _ = u
         return get_possible_onesteps(u, convs)
     # return utils.bfs_with_neighbor_generator(neighbor_generator, "e", input_str)
 
     reverse_convs = [(v, u) for (u, v) in convs]
 
     def neighbor_generator_reverse(u):
+        u, _ = u
         return get_possible_onesteps(u, reverse_convs)
     
     def priority_fn(u):

@@ -47,7 +47,6 @@ def p1(input):
 
     regs = {"a": 0, "b": 0}
     regs = run_cmds(regs)
-    print(regs)
     return regs["b"]
         
 

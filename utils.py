@@ -250,7 +250,6 @@ def bfs_with_neighbor_generator(neighbor_generator, start_vertex, target=None, \
     
     k = bfs_return_path(neighbor_generator, start_vertex, target, \
                                state_in_list, priorityfn)
-    print(k)
     if target is not None:
         return len(k) - 1
     

@@ -2,7 +2,6 @@ import utils
 
 # returns the number of ways you can store total_amt with sizes in list. 
 def nways(total_amt, container_sizes):
-    print(total_amt, container_sizes)
     if total_amt <= 0:
         return frozenset()
     all_ways = set()

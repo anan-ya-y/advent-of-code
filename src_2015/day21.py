@@ -52,7 +52,6 @@ def can_win(player_stats, boss_stats):
     player_hit_val = max(1, player_stats[1] - boss_stats[2]) # player damage - boss armor
     boss_hit_val = max(1, boss_stats[1] - player_stats[2]) # boss damage - player armor
 
-    print(player_hit_val, boss_hit_val)
     return player_hit_val >= boss_hit_val
 
     # TODO: make this so that it's just a math eqn and not a while loop
