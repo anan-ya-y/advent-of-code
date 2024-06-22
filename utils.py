@@ -247,38 +247,18 @@ def reachability(start_vertex, neighbors: dict):
 # neighbor_generator: function that takes input vertex outputs list of all possible neighbors
 def bfs_with_neighbor_generator(neighbor_generator, start_vertex, target=None, \
                                 priorityfn=None, state_in_list=None):
-    if state_in_list is None:
-        state_in_list = lambda x, l: x in l
+    
+    k = bfs_return_path(neighbor_generator, start_vertex, target, \
+                               state_in_list, priorityfn)
+    print(k)
+    if target is not None:
+        return len(k) - 1
+    
+    distances = {}
+    for v, path in k:
+        distances[v] = len(path) - 1
 
-    # q = [(start_vertex, 0)]
-    q = PriorityQueue()
-    queue_counter = 0 # pq tiebreaker. 
-    q.put((1 if priorityfn is None else priorityfn(start_vertex), \
-           queue_counter, start_vertex, 0))
-    queue_counter += 1 
-    dists = {}
-
-    # while len(q) > 0:
-    while not q.empty():
-        # u, d = q.pop(0)
-        _, _, u, d = q.get()
-
-        if u in dists:
-            continue
-
-        dists[u] = d
-        if u == target:
-            return dists[u]
-        for v in neighbor_generator(u):
-            if not state_in_list(v, dists):
-                # q.append((v, d+1))
-                q.put((1 if priorityfn is None else priorityfn(v), \
-                       queue_counter, v, d+1))
-                queue_counter += 1
-
-    if target is None:
-        return dists
-    return -1
+    return distances
 
 # Returns length of shortest path from start_vertex to target. 
 # if target is None, returns dict of shortest paths lengths to all vertices. 
@@ -286,6 +266,7 @@ def bfs_with_neighbor_generator(neighbor_generator, start_vertex, target=None, \
 # neighbors: dict of vertex: list of neighbors
 def bfs_with_neighbors(neighbors:dict, start_vertex, target=None):
     def neighbor_fn(x):
+        x, path = x
         return neighbors[x]
     return bfs_with_neighbor_generator(neighbor_fn, start_vertex, target)
 
@@ -302,6 +283,7 @@ def bfs_return_path(neighbors_generator, start_vertex, target, \
     q.put((priority_fn(start_vertex), queue_counter, start_vertex, [start_vertex]))
     queue_counter += 1 
     visited = set()
+    paths = set() # set of tuples (vertex, path)
 
     # while len(q) > 0:
     while not q.empty():
@@ -312,6 +294,8 @@ def bfs_return_path(neighbors_generator, start_vertex, target, \
             continue
 
         visited.add(u)
+        paths.add((u, tuple(path)))
+
         if u == target:
             return path
         for v in neighbors_generator((u, path)):
@@ -319,8 +303,11 @@ def bfs_return_path(neighbors_generator, start_vertex, target, \
                 # q.append((v, path + [v]))
                 q.put((priority_fn(v), queue_counter, v, path + [v]))
                 queue_counter += 1
-        
-    return None
+    
+
+    if target is not None: # we wanted the distance to a target.. which we didn't find
+        return []
+    return paths # we wanted all the paths 
 
 def longest_path_length(neighbors_generator, start_vertex, target, state_in_list):
     if state_in_list is None:
