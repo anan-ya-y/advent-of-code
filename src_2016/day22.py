@@ -11,22 +11,30 @@ swappable = lambda x, y, grid: x in grid and \
                                 x != y
 valid = lambda x, y, grid: adjacent(x, y) and swappable(x, y, grid)
 
-SIZE=0
-USED=1
-AVAIL=2
-USE=3
+SIZE="size"
+USED="used"
+AVAIL="avail"
+USE="use"
 
-def print_grid(grid):
+def print_grid(grid, simple=True):
     max_x = int(max([k.real for k in grid]))
     max_y = int(max([k.imag for k in grid]))
     print("-----")
     for i in range(max_y+1):
         for j in range(max_x+1):
             node = c(j, i)
-            if node in grid:
-                print(f"{grid[node][USED]}/{grid[node][SIZE]}", end=" ")
+            if not simple:
+                if node in grid:
+                    print(f"{grid[node][USED]}/{grid[node][SIZE]}", end=" ")
+                else:
+                    print(" ", end="")
             else:
-                print(" ", end="")
+                if grid[node][USED] == 0:
+                    print("_", end="")
+                elif grid[node][USED] > 100:
+                    print("#", end="")
+                else:
+                    print(".", end="")
         print()
     print("-----")
 
@@ -37,7 +45,12 @@ def parse_input(input):
     for line in input[2:]:        
         k = re.search(regex_expression, line)
         k = list(map(int, k.groups()))
-        grid[c(k[0], k[1])] = k[2:]
+        grid[c(k[0], k[1])] = {
+            SIZE: k[2],
+            USED: k[3],
+            AVAIL: k[4],
+            USE: k[5]
+        }
     return grid
 
 def execute_swaps(grid, moves):
@@ -45,6 +58,8 @@ def execute_swaps(grid, moves):
         current, next = moves[i], moves[i+1]
         grid[current][USED] += grid[next][USED]
         grid[next][USED] = 0
+        grid[current][AVAIL ] = grid[current][SIZE] - grid[current][USED]
+        grid[next][AVAIL] = grid[next][SIZE] - grid[next][USED]
     return grid
 
 def p1(input):
@@ -59,38 +74,35 @@ def p1(input):
 def p2(input):
     nsteps = 0
     grid = parse_input(input)
-    # print("ORIGINAL GRID")
-    # print_grid(grid)
 
     # Find the empty node
     empty = [k for k, v in grid.items() if v[USED] == 0][0]
     target = max([k for k in grid if k.imag == 0], key=lambda x: x.real)
-    # print(f"EMPTYLOC: {empty}, TARGETLOC: {target}")
+    print(f"EMPTYLOC: {empty}, TARGETLOC: {target}")
 
     # move the empty to right next to the target
     def neighbor_generator(node):
         position, swaps = node
-        new_grid = execute_swaps(grid.copy(), swaps)
-        # print(f"after execution of {swaps}")
-        # print_grid(new_grid)
+        new_grid = execute_swaps(copy.deepcopy(grid), swaps)
         directions = [c(1, 0), c(-1, 0), c(0, 1), c(0, -1)]
         next_positions = []
         for d in directions:
             new_pos = position + d
-            if valid(position, new_pos, new_grid):
+            if position in grid and new_pos in grid and \
+                new_grid[new_pos][USED] <= new_grid[position][AVAIL] and \
+                new_pos != position:
                 next_positions.append(new_pos)
         # print(node, next_positions)
         return next_positions
-    def euclidean_priority(node):
-        return abs(node - target)
+    def priority_up(node):
+        return node.imag
     
-    first_part = utils.bfs_return_path(neighbor_generator, empty, target-c(1, 0))#, \
-                                        # priority_fn=euclidean_priority)
+    bfs_target = target-c(1, 0)
+    first_part = utils.bfs_return_path(neighbor_generator, empty, bfs_target, \
+                                        priority_fn=priority_up)
     grid = execute_swaps(grid, first_part)
-    nsteps += len(first_part)
-    # print("AFTER FIRST PART")
-    # print(first_part)
-    # print_grid(grid)
+    nsteps += len(first_part)-1
+    assert len(first_part)-1 == 33, len(first_part)
 
 
     def toptworows_swappable(grid): # the data of any node can fit in any node
@@ -105,7 +117,9 @@ def p2(input):
     assert grid[target][USED] == 0, "Empty node not in target position"
 
     # it takes 5 turns to go from .G_ to G_.
-    nmoves_g = target.real + 1# ...G_ -> G_... number of moves
+    nmoves_g = target.real-1# ...G_ -> G_... number of moves
+    assert nmoves_g == 35, f"nmoves_g: {nmoves_g}"
     nsteps += 5*nmoves_g
 
+    assert nsteps == 33 + 1 + (5*35)
     return nsteps
