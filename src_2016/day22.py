@@ -84,8 +84,8 @@ def p2(input):
     def euclidean_priority(node):
         return abs(node - target)
     
-    first_part = utils.bfs_return_path(neighbor_generator, empty, target-c(1, 0), \
-                                        priority_fn=euclidean_priority)
+    first_part = utils.bfs_return_path(neighbor_generator, empty, target-c(1, 0))#, \
+                                        # priority_fn=euclidean_priority)
     grid = execute_swaps(grid, first_part)
     nsteps += len(first_part)
     # print("AFTER FIRST PART")
@@ -105,7 +105,7 @@ def p2(input):
     assert grid[target][USED] == 0, "Empty node not in target position"
 
     # it takes 5 turns to go from .G_ to G_.
-    nmoves_g = target.real# ...G_ -> G_... number of moves
+    nmoves_g = target.real + 1# ...G_ -> G_... number of moves
     nsteps += 5*nmoves_g
 
     return nsteps
