@@ -27,6 +27,15 @@ def state_to_string(state):
     floors = [sorted(floor) for floor in floors]
     return f"{str(floors)}-{elevator}"
 
+def serialize(state):
+    floors, e = state
+    serial = []
+    for f in floors:
+        m = [item for item in f if item[1] == "M"]
+        g = [item for item in f if item[1] == "G"]
+        serial.append((len(m), len(g)))
+    return tuple(serial)
+
 perms = {}
 def get_all_perms(state):
     floorstate, e = state
