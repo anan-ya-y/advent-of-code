@@ -109,9 +109,13 @@ def get_min_elevator(start_position, target_position):
     while len(q) > 0:
         state, steps = q.pop(0)
         state_str = state_to_string(state)
-        if state_str in seen_states:
+        s = serialize(state)
+        if s in seen_states:
             continue
-        seen_states = seen_states.union(get_all_perms(state))
+        seen_states.add(s)
+        # if state_str in seen_states:
+        #     continue
+        # seen_states = seen_states.union(get_all_perms(state))
         # print("examining", state_to_string(state))
 
         if state_str in target_states:
