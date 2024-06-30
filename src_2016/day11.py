@@ -34,7 +34,7 @@ def serialize(state):
         m = [item for item in f if item[1] == "M"]
         g = [item for item in f if item[1] == "G"]
         serial.append((len(m), len(g)))
-    return tuple(serial)
+    return tuple([tuple(serial), e])
 
 perms = {}
 def get_all_perms(state):
