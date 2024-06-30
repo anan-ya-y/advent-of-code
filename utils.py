@@ -244,7 +244,7 @@ def reachability(start_vertex, neighbors: dict):
 # state_in_list(x, list) returns True if an equivalent state to x is in list. 
 # Returns length of shortest path from start_vertex to target. 
 # if target is None, returns dict of shortest path lengths to all other states. 
-# neighbor_generator: function that takes input vertex outputs list of all possible neighbors
+# neighbor_generator: function that takes input (vertex, path to vertex) outputs list of all possible neighbors
 def bfs_with_neighbor_generator(neighbor_generator, start_vertex, target=None, \
                                 priorityfn=None, state_in_list=None):
     
