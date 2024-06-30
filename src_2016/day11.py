@@ -113,15 +113,10 @@ def get_min_elevator(start_position, target_position):
         if s in seen_states:
             continue
         seen_states.add(s)
-        # if state_str in seen_states:
-        #     continue
-        # seen_states = seen_states.union(get_all_perms(state))
-        # print("examining", state_to_string(state))
 
         if state_str in target_states:
             return steps
         for s in get_next_states(state):
-            # print("adding", state_to_string(s))
             q.append((s, steps+1))
 
     return -1
@@ -130,12 +125,22 @@ def p1(input):
     floors = read_input(input)
     all_stuff = get_all_objects(floors)
 
-    end_floors = [set(), set(), set(), all_stuff]
-    end_position = (end_floors, 3)
+    end_floors = [set()] * (MAX_FLOOR) + [all_stuff]
+    end_position = (end_floors, MAX_FLOOR)
     start_position = (floors, 0)
 
     nsteps = get_min_elevator(start_position, end_position)
     return nsteps
 
 def p2(input):
-    return -1
+    floors = read_input(input)
+    lobby = set(["DG", "DM", "EG", "EM"])
+    floors[0] = floors[0].union(lobby)
+    all_stuff = get_all_objects(floors)
+
+    end_floors = [set()] * (MAX_FLOOR) + [all_stuff]
+    end_position = (end_floors, MAX_FLOOR)
+    start_position = (floors, 0)
+
+    nsteps = get_min_elevator(start_position, end_position)
+    return nsteps
