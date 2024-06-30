@@ -27,10 +27,14 @@ def state_to_string(state):
     floors = [sorted(floor) for floor in floors]
     return f"{str(floors)}-{elevator}"
 
+perms = {}
 def get_all_perms(state):
     floorstate, e = state
     all_perms = permutations(ALL_ELEMS)
     all_permstrings = set()
+    s = state_to_string(state)
+    if s in perms:
+        return perms[s]
     for perm in all_perms:
         newstate = []
         for floor in floorstate:
@@ -41,6 +45,7 @@ def get_all_perms(state):
                 newfloor.add(newitem)
             newstate.append(newfloor)
         all_permstrings.add(state_to_string((newstate, e)))
+    perms[s] = all_permstrings
     return all_permstrings
 
 def equivalent_states(s1, s2):
@@ -90,15 +95,17 @@ def get_next_states(state):
 def get_min_elevator(start_position, target_position):
     seen_states = set() # set of state strings. 
     q = [(start_position, 0)]
+    target_states = get_all_perms(target_position)
 
     while len(q) > 0:
         state, steps = q.pop(0)
-        if state_to_string(state) in seen_states:
+        state_str = state_to_string(state)
+        if state_str in seen_states:
             continue
         seen_states = seen_states.union(get_all_perms(state))
         # print("examining", state_to_string(state))
 
-        if equivalent_states(state, target_position):
+        if state_str in target_states:
             return steps
         for s in get_next_states(state):
             # print("adding", state_to_string(s))
