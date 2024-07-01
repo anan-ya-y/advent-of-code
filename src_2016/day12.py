@@ -24,11 +24,14 @@ def run_one_cmd(regs, c):
             x = regs[x]
         if y.isalpha():
             y = regs[y]
-        
-        if x != 0:
-            i = int(y)
-        else:
+        y = int(y)
+        x = int(x)
+
+        if y == 0 or x == 0:
             i = 1
+        elif x != 0:
+            i = int(y)
+
 
     if cmd == "inc":
         regs[args[0]] += 1
