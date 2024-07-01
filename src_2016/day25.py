@@ -17,6 +17,7 @@ def run_inst_with_out(regs, cmds):
     # return regs
 
 def p1(input):
+    # couldve brute forced it if it weren't for that bug! 
     cmds = utils.split_and_strip(input)
     
     start_val = 0
