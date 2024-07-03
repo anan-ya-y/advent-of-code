@@ -2,6 +2,7 @@ import importlib
 import aocd
 import os
 import time
+import numpy as np
 
 # UTILS FILE FOR RUNNING AOCD SOLUTIONS QUICKLY. 
 #### FOR OUTPUT CAPTURING. 
@@ -58,6 +59,16 @@ def run_day(module, year, day, sample=False):
 
     return p1_ans, p2_ans
 
+# return a string, int, or float. 
+def clean_ans(ans):
+    if type(ans) in [str, int, float]:
+        return ans
+    if type(ans) == np.integer:
+        return int(ans)
+    if type(ans) == np.float:
+        return float(ans)  
+
+
 # returns bool, bool for p1, p2 correct
 def submit_day(module, year, day):
     p1, p2 = run_day(module, year, day, sample=False)
@@ -65,7 +76,7 @@ def submit_day(module, year, day):
     if p2 is not None:
         p2_correct = __submit_ans(p2, "b", day, year)
     else:
-        p2_correct = False
+        p2_correct = day == 25
 
     return p1, p2, p1_correct, p2_correct
 
