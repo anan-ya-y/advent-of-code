@@ -50,6 +50,8 @@ def run_day(module, year, day, sample=False):
             p2_ans = m.p2(input)
             p2_etime = time.time()
             print("Part 2:\t", p2_ans, "\t", round(p2_etime-p2_stime, 5), "s")
+        else:
+            p2_ans = -1
     else: # run as "main" function with tuple output. 
         stime = time.time()
         p1_ans, p2_ans = m.main(input)
@@ -57,16 +59,18 @@ def run_day(module, year, day, sample=False):
         print("Part 1:\t", p1_ans, "\t", round(etime-stime, 5), "s")
         print("Part 2:\t", p2_ans, "\t", round(etime-stime, 5), "s")
 
+    p1_ans, p2_ans = clean_ans(p1_ans), clean_ans(p2_ans)
     return p1_ans, p2_ans
 
 # return a string, int, or float. 
 def clean_ans(ans):
     if type(ans) in [str, int, float]:
         return ans
-    if type(ans) == np.integer:
+    if type(ans) in [np.integer, np.int64, np.int32]:
         return int(ans)
     if type(ans) == np.float:
-        return float(ans)  
+        return float(ans) 
+    raise ValueError("Invalid answer type", type(ans))
 
 
 # returns bool, bool for p1, p2 correct
