@@ -23,7 +23,7 @@ def p1(input):
     end = (31, 39)
 
     x = utils.bfs_with_neighbor_generator(\
-                        lambda x: get_neighbors(x[0], x[1], favnumber), \
+                        lambda x: get_neighbors(x[0][0], x[0][1], favnumber), \
                         start, end)
     return x
 
@@ -38,7 +38,7 @@ def p2(input):
         return get_neighbors(x, y, favnumber)
 
     x = utils.bfs_with_neighbor_generator(\
-                        lambda x: neighbors_inf_bfs(x[0], x[1], favnumber), \
+                        lambda x: neighbors_inf_bfs(x[0][0], x[0][1], favnumber), \
                         start)
     first = set([a for a in x if x[a] <= 50])
     return len(first)

@@ -1,4 +1,5 @@
 import utils
+# SPEED DEPENDENT ON MD5 SPEED.
 
 salt = ""
 hashes = {}

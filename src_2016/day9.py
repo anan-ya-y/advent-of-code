@@ -39,14 +39,7 @@ def p1(input):
 def p2(input):
 
     orig = input
-    # decompressed = decompress(input, recursive=True)  
     decompressed = decompress(input, recursive=True)
-    # while orig != decompressed:
-    #     orig = decompressed
-    #     decompressed = decompress(decompressed, recursive=False)
-    #     print(len(decompressed))
-
-
     # remove whitespace
     decompressed = decompressed.replace(" ", "").replace("\n", "")
     return len(decompressed)
