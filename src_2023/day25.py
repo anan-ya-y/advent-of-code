@@ -59,20 +59,17 @@ def p1(inp):
             neighbors[n].add(label)
 
     G.add_edges_from(edges)
-    nx.draw(G, with_labels="True")
-    import matplotlib.pyplot as plt
-    plt.show()
+    # nx.draw(G, with_labels="True")
+    # import matplotlib.pyplot as plt
+    # plt.show()
             
-    e1 = input("enter next vertex")
-    e2 = input("enter next vertex")
-    e3 = input("enter next vertex")
-    e4 = input("enter next vertex")
-    e5 = input("enter next vertex")
-    e6 = input("enter next vertex")
-    cut = [(e1, e2), (e3, e4), (e5, e6)]
+    # e1 = input("enter next vertex ")
+    # e2 = input("enter next vertex ")
+    # e3 = input("enter next vertex ")
+    # e4 = input("enter next vertex ")
+    # e5 = input("enter next vertex ")
+    # e6 = input("enter next vertex ")
+    # cut = [(e1, e2), (e3, e4), (e5, e6)]
             
-    # cut = [("rkh", "sph"), ("mnf", "hrs"), ("kpc", "nnl")]
+    cut = [("rkh", "sph"), ("mnf", "hrs"), ("kpc", "nnl")]
     return get_product(vertices, neighbors, cut)
-
-def p2(input):
-    return

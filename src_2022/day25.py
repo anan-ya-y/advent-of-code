@@ -52,13 +52,13 @@ def dec_to_snafu(num):
     x = dec_to_base5(num)
     return base5_to_snafu(x)
 
-def p1(filename):
-    lines = utils.get_file_stripped_lines(filename)
+def p1(input):
+    lines = utils.split_and_strip(input)
     dec_sum = 0
     for l in lines:
         dec_sum += snafu_to_dec(l)
 
-    print(dec_to_snafu(dec_sum))
+    return dec_to_snafu(dec_sum)
     
 
 
