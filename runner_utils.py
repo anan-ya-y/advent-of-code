@@ -61,8 +61,7 @@ def run_day(module, year, day, sample=False):
 # returns bool, bool for p1, p2 correct
 def submit_day(module, year, day):
     p1, p2 = run_day(module, year, day, sample=False)
-    p1_correct = __submit_ans(p1, "a", day, year)
-    aocd.submit(p1, part="a", day=day, year=year)
+    p1_correct =  __submit_ans(p1, "a", day, year)
     if p2 is not None:
         p2_correct = __submit_ans(p2, "b", day, year)
     else:
@@ -76,7 +75,8 @@ def __submit_ans(ans, part, day, year):
         aocd.submit(ans, part=part, day=day, year=year)
     out = f.getvalue()
     print(out)
-    return "That's the right answer" in out
+    return "That's the right answer" in out \
+            or "already solved with same answer" in out
 
 def import_module(year, day):
     lib = "src_{}.day{}".format(year, day)

@@ -1,4 +1,4 @@
-import argparse, json
+import argparse, json, os
 import runner_utils as ru
 
 ANSWERFILENAME = "tests/answers.json"
@@ -43,8 +43,9 @@ else: # importing all modules
 
 if args.write:
     # read the json file. 
-    with open(ANSWERFILENAME, "r") as f:
-        answers = json.load(f)
+    if os.path.exists(ANSWERFILENAME):
+        with open(ANSWERFILENAME, "r") as f:
+            answers = json.load(f)
 
 if args.all:
     days = range(1, len(modules)+1)
