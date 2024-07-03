@@ -17,6 +17,3 @@ def p1(input):
         val = get_next_num(val)
 
     return val
-
-def p2(input):
-    return -1
