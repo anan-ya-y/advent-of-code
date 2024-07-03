@@ -97,6 +97,24 @@ def test_bfs():
     assert x['F'] == 2
     assert utils.bfs_with_neighbors(graph, 'A', 'D') == -1
 
+def test_reachability():
+    graph = {
+        'A': ['B', 'C'],
+        'B': ['F'],
+        'C': ['F'],
+        'D': [],
+        'E': ['F'],
+        'F': ['E']
+    }
+
+    x = utils.reachability('A', graph)
+    assert x == set(['A', 'B', 'C', 'F', 'E'])
+
+    x = utils.reachability('D', graph)
+    assert x == set(['D'])
+
+    x = utils.reachability('E', graph)
+    assert x == set(['E', 'F'])
 # def test_past_comps():
 #     import subprocess
 

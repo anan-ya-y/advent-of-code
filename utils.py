@@ -231,7 +231,8 @@ def reachability(start_vertex, neighbors: dict):
     #         if v not in visited:
     #             q.append(v)
     # return visited
-    return bfs_with_neighbors(neighbors.keys(), neighbors, start_vertex, None)
+    x = bfs_with_neighbors(neighbors, start_vertex, None)
+    return set(x.keys())
 
 # # Returns length of shortest path from start_vertex to target
 # # if target is None, returns dict of shortest paths lengths to all vertices.
