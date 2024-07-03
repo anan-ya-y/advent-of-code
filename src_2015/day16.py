@@ -36,7 +36,8 @@ def p2(input):
             (c["goldfish"] == -1 or c["goldfish"] <= 5) and \
             (c["trees"] == -1 or c["trees"] >= 3) and \
             (c["pomeranians"] == -1 or c["pomeranians"] <= 3):
-            return suenum
+            if int(suenum) != int(p1(input)):
+                return suenum
             
 
 

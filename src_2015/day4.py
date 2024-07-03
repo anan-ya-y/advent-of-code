@@ -11,6 +11,7 @@ def p1(input):
     return -1
 
 def p2(input):
+    print("Runtime restricted by speeed of MD5 hashing.")
     input = bytes(input, "utf-8")
     i = 1
     while True:
