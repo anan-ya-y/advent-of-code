@@ -68,7 +68,7 @@ def clean_ans(ans):
         return ans
     if type(ans) in [np.integer, np.int64, np.int32]:
         return int(ans)
-    if type(ans) == np.float:
+    if type(ans) in [np.float, np.float64]:
         return float(ans) 
     raise ValueError("Invalid answer type", type(ans))
 
