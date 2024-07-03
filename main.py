@@ -1,68 +1,17 @@
-import importlib
-import argparse
-import aocd
-import os
-import time
+import argparse, json
+import runner_utils as ru
 
+ANSWERFILENAME = "tests/answers.json"
 
-def get_input_filename(year, day, sample=False):
-    if sample:
-        filepath = "src_" + str(year) + "/inputs/"+str(day)+".sample.txt"
-    else:
-        filepath = "src_" + str(year) + "/inputs/"+str(day)+".real.txt"
-
-    if os.path.exists(filepath):
-        print("file exists. opening. ")
-        return filepath
-    elif not sample:
-        with open(filepath, "w") as f:
-            f.write(aocd.get_data(day=day, year=year))
-    else:
-        print("No sample input file found for day", day)
-        exit(1)
-    return filepath
-
-def get_input_string(filename):
-    with open(filename, "r") as f:
-        return f.read()    
-
-def run_day(year, day, sample=False):
-    print("Day", day)
-    m = modules[day]
-    filename = get_input_filename(year, day, sample)
-    input = get_input_string(filename)
-
-    if hasattr(m, "p1") and callable(m.p1):
-        p1_stime = time.time()
-        p1_ans = m.p1(input)
-        p1_etime = time.time()
-        print("Part 1:\t", p1_ans, "\t", round(p1_etime-p1_stime, 5), "s")
-
-        if hasattr(m, "p2") and callable(m.p2):
-            p2_stime = time.time()
-            p2_ans = m.p2(input)
-            p2_etime = time.time()
-            print("Part 2:\t", p2_ans, "\t", round(p2_etime-p2_stime, 5), "s")
-    else: # run as "main" function with tuple output. 
-        stime = time.time()
-        p1_ans, p2_ans = m.main(input)
-        etime = time.time()
-        print("Part 1:\t", p1_ans, "\t", round(etime-stime, 5), "s")
-        print("Part 2:\t", p2_ans, "\t", round(etime-stime, 5), "s")
-
-    return p1_ans, p2_ans
-
-def submit_day(year, day):
-    p1, p2 = run_day(year, day, sample=False)
-    aocd.submit(p1, part="a", day=day, year=year)
-    if p2 is not None:
-        aocd.submit(p2, part="b", day=day, year=year)
-
-def import_module(year, day):
-    lib = "src_{}.day{}".format(year, day)
-    m = globals()[lib] = importlib.import_module(lib)
-    # print("Successfuly imported", lib)
-    return m
+def write_ans(existing_answers, year, day, part, ans):
+    y = str(year)
+    d = str(day)
+    if y not in existing_answers:
+        existing_answers[y] = {}
+    if d not in existing_answers[y]:
+        existing_answers[y][d] = {}
+    existing_answers[y][d][part] = ans
+    return existing_answers
 
 #--------- RUN CODE ----------#
 
@@ -74,23 +23,28 @@ parser.add_argument("day", nargs="?", type=int, help="Select just one day to run
 parser.add_argument("-s", "--sample", action="store_true", help="Run sample instead of input")
 parser.add_argument("-r", "--submit", action="store_true", help="Submit solutions to AoC")
 parser.add_argument("-a", "--all", action="store_true", help="run all ")
+parser.add_argument("-w", "--write", action="store_true", help=f"write correct answers to {ANSWERFILENAME}")
 
 args = parser.parse_args()
 
 # module importing
 modules = {}
 if args.day is not None: # importing one specific module
-    m = import_module(args.year, args.day)
+    m = ru.import_module(args.year, args.day)
     modules[args.day] = m
 else: # importing all modules
     for i in range(1, 26):
         try:
-            m = import_module(args.year, i)
+            m = ru.import_module(args.year, i)
             modules[i] = m
         except ModuleNotFoundError:
             print("Module not found for day", i)
             continue
 
+if args.write:
+    # read the json file. 
+    with open(ANSWERFILENAME, "r") as f:
+        answers = json.load(f)
 
 if args.all:
     days = range(1, len(modules)+1)
@@ -99,10 +53,18 @@ else:
     days = [args.day]
 
 for d in days:
-    if args.submit:
-        submit_day(args.year, d)
+    if args.submit or args.write:
+        p1, p2, p1_correct, p2_correct = ru.submit_day(modules[d], args.year, d)
+        if args.write and p1_correct:
+            answers = write_ans(answers, args.year, d, "a", p1)
+        if args.write and p2_correct:
+            answers = write_ans(answers, args.year, d, "b", p2)
     else:
-        run_day(args.year, d, args.sample)
+        ru.run_day(modules[d], args.year, d, args.sample)
+
+if args.write:
+    with open(ANSWERFILENAME, "w") as f:
+        json.dump(answers, f, indent=4)
 
 # if args.all:
 #     print("--AoC {}--\n".format(args.year))

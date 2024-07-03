@@ -1,6 +1,7 @@
 # MINE
 *.out
 **/inputs/*
+**/answers.json
 
 
 # Byte-compiled / optimized / DLL files
