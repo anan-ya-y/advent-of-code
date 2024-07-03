@@ -11,6 +11,8 @@ def write_ans(existing_answers, year, day, part, ans):
     if d not in existing_answers[y]:
         existing_answers[y][d] = {}
     existing_answers[y][d][part] = ans
+    with open(ANSWERFILENAME, "w") as f:
+        json.dump(answers, f, indent=4)
     return existing_answers
 
 #--------- RUN CODE ----------#
@@ -63,9 +65,9 @@ for d in days:
     else:
         ru.run_day(modules[d], args.year, d, args.sample)
 
-if args.write:
-    with open(ANSWERFILENAME, "w") as f:
-        json.dump(answers, f, indent=4)
+# if args.write:
+#     with open(ANSWERFILENAME, "w") as f:
+#         json.dump(answers, f, indent=4)
 
 # if args.all:
 #     print("--AoC {}--\n".format(args.year))
