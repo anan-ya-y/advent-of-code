@@ -26,22 +26,29 @@ def get_input_string(filename):
     with open(filename, "r") as f:
         return f.read()    
 
-
 def run_day(year, day, sample=False):
     print("Day", day)
     m = modules[day]
     filename = get_input_filename(year, day, sample)
     input = get_input_string(filename)
 
-    p1_stime = time.time()
-    p1_ans = m.p1(input)
-    p1_etime = time.time()
-    print("Part 1:\t", p1_ans, "\t", round(p1_etime-p1_stime, 5), "s")
+    if hasattr(m, "p1") and callable(m.p1):
+        p1_stime = time.time()
+        p1_ans = m.p1(input)
+        p1_etime = time.time()
+        print("Part 1:\t", p1_ans, "\t", round(p1_etime-p1_stime, 5), "s")
 
-    p2_stime = time.time()
-    p2_ans = m.p2(input)
-    p2_etime = time.time()
-    print("Part 2:\t", p2_ans, "\t", round(p2_etime-p2_stime, 5), "s")
+        if hasattr(m, "p2") and callable(m.p2):
+            p2_stime = time.time()
+            p2_ans = m.p2(input)
+            p2_etime = time.time()
+            print("Part 2:\t", p2_ans, "\t", round(p2_etime-p2_stime, 5), "s")
+    else: # run as "main" function with tuple output. 
+        stime = time.time()
+        p1_ans, p2_ans = m.main(input)
+        etime = time.time()
+        print("Part 1:\t", p1_ans, "\t", round(etime-stime, 5), "s")
+        print("Part 2:\t", p2_ans, "\t", round(etime-stime, 5), "s")
 
     return p1_ans, p2_ans
 
