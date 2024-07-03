@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 import runner_utils as ru
 
 def pytest_addoption(parser):
-    parser.addoption("--year", action="store_true", help="run all combinations")
+    parser.addoption("--year", action="store", help="run all combinations")
 
 def pytest_generate_tests(metafunc):
     if "questiondata" in metafunc.fixturenames:
@@ -16,7 +16,7 @@ def pytest_generate_tests(metafunc):
         if year:
             years = [year]
         else:
-            years = [2015]#range(2015, 2024)
+            years = [2015, 2016, 2022, 2023]#range(2015, 2024)
 
         days = range(1, 26)
 

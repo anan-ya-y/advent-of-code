@@ -18,6 +18,7 @@ def test_one_day(questiondata):
     corrects = answers[str(day)]
 
     assert p1 == corrects["a"], f"Day {day} part a failed"
-    assert p2 == corrects["b"], f"Day {day} part b failed"
+    if day != 25:
+        assert p2 == corrects["b"], f"Day {day} part b failed"
 
 
