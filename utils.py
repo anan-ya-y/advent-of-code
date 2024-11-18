@@ -371,3 +371,67 @@ def md5(s):
 
 def get_all_chars_in_squarebrackets(s):
     return re.findall(r"\[(\w+)\]", s)
+
+# gets the range, inclusive of a, b, and regardless of increasing or dec
+def range_inclusive(a, b):
+    if a == b:
+        return range(a, a+1)
+    if a > b:
+        return range(a, b-1, -1)
+    return range(a, b+1)
+
+# line stuff
+# input: 2 points on the line
+def slope(p1, p2):
+    x1, y1 = p1
+    x2, y2 = p2
+    if x2 - x1 == 0:
+        return float('inf')
+    return (y2 - y1) / (x2 - x1)
+
+# input: 2 poitns from line 1, 2 points from line 2
+def get_line_intersection(l1p1, l1p2, l2p1, l2p2):
+    # if either line is vertical, brute force it
+    if slope(l1p1, l1p2) == float('inf'):
+        if slope(l2p1, l2p2) == float('inf'):
+            if min(l1p1[0], l1p2[0]) <= l2p1[0] <= max(l1p1[0], l1p2[0]):
+                return (l2p1[0], l1p1[1])
+            if min(l1p1[0], l1p2[0]) <= l2p1[1] <= max(l1p1[0], l1p2[0]):
+                return (l2p1[1], l1p1[1])
+        m2 = slope(l2p1, l2p2)
+        x = l1p1[0]
+        y = m2 * (x - l2p1[0]) + l2p1[1]
+        return (x, y)   \
+            if pt_on_line((x, y), l1p1, l1p2) and pt_on_line((x, y), l2p1, l2p2) \
+            else None
+    if slope(l2p1, l2p2) == float('inf'):
+        return get_line_intersection(l2p1, l2p2, l1p1, l1p2)
+
+    m1 = slope(l1p1, l1p2)
+    m2 = slope(l2p1, l2p2)
+    x1, y1 = l1p1
+    x2, y2 = l2p1
+    x = (m1*x1 - m2*x2 + y2 - y1) / (m1 - m2)
+    y = m1 * (x - x1) + y1
+
+    return (x, y) \
+        if pt_on_line((x, y), l1p1, l1p2) and pt_on_line((x, y), l2p1, l2p2) \
+        else None
+
+# input: pt = point to check, point1, point2 = points on the line
+def pt_on_line(pt, point1, point2):
+    x1, y1 = point1
+    x2, y2 = point2
+    x, y = pt
+
+    if not (min(x1, x2) <= x <= max(x1, x2) and \
+            min(y1, y2) <= y <= max(y1, y2)):
+        return False
+
+    if x1==x2 or y1==y2:
+        return True
+    
+    m = (y2-y1)/(x2-x1)
+    return (y - y1) == m * (x - x1) 
+
+    
