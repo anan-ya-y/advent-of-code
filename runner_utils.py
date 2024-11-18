@@ -85,13 +85,14 @@ def submit_day(module, year, day):
     return p1, p2, p1_correct, p2_correct
 
 def __submit_ans(ans, part, day, year):
-    f = io.StringIO()
-    with contextlib.redirect_stdout(f):
-        aocd.submit(ans, part=part, day=day, year=year)
-    out = f.getvalue()
-    print(out)
-    return "That's the right answer" in out \
-            or "already solved with same answer" in out
+    aocd.submit(ans, part=part, day=day, year=year)
+    # f = io.StringIO()
+    # with contextlib.redirect_stdout(f):
+        # aocd.submit(ans, part=part, day=day, year=year)
+    # out = f.getvalue()
+    # print(out)
+    # return "That's the right answer" in out \
+            # or "already solved with same answer" in out
 
 def import_module(year, day):
     lib = "src_{}.day{}".format(year, day)
