@@ -330,6 +330,27 @@ def bfs_return_path(neighbors_generator, start_vertex, target, \
         return []
     return paths # we wanted all the paths 
 
+# neighbor_generator: function that takes input (vertex, path to vertex) outputs list of all possible neighbors
+# THE GRAPH BETTER HAVE NO CYCLES
+def bfs_distinct_paths(neighbor_generator, start_vertex, target):
+    paths = []
+
+    q = []
+    q.append((start_vertex, [start_vertex]))
+    while len(q) > 0:
+        u, path = q.pop(0)
+
+        if u == target:
+            paths.append(path)
+        else:
+            for v in neighbor_generator((u, path)):
+                if v not in path:
+                    q.append((v, path + [v]))
+    
+    return paths
+
+
+
 def longest_path_length(neighbors_generator, start_vertex, target, state_in_list):
     if state_in_list is None:
         state_in_list = lambda x, l: x in l
