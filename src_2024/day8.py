@@ -50,7 +50,7 @@ def print_map(space, antinodes):
         print()
 
 def main(input):
-    space = parse_input(input)
+    space = utils.get_complex_space(input, "values") #parse_input(input)
     max_r = int(max([p.real for p in space['.']]))+1
     max_c = int(max([p.imag for p in space['.']]))+1
 

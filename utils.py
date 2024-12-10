@@ -3,6 +3,7 @@ from queue import PriorityQueue
 from functools import reduce
 import re
 import hashlib
+c = complex
 
 def read_file(filename):
     with open(filename, 'r') as f:
@@ -25,6 +26,26 @@ def ss(filecontents, character="\n"):
 
 def split_by_whitespace(filecontents):
     return re.split(r'\s+', filecontents)
+
+# keys="positions" gets {complex position: value}
+# keys="values" gets {value: [positions]}
+def get_complex_space(input, keys="positions"):
+    if keys not in ["positions", "values"]:
+        raise ValueError("keys must be 'positions' or 'values'")
+    input = split_and_strip(input)
+    space = {}
+    for row in range(len(input)):
+        for col in range(len(input[row])):
+            if keys == "positions":
+                space[c(row, col)] = input[row][col]
+            elif keys == "values":
+                if input[row][col] not in space:
+                    space[input[row][col]] = []
+                space[input[row][col]].append(c(row, col))
+
+    return space
+
+
 
 ### If using bitmasks, I guess. 
 
@@ -434,4 +455,4 @@ def pt_on_line(pt, point1, point2):
     m = (y2-y1)/(x2-x1)
     return (y - y1) == m * (x - x1) 
 
-    
+   
