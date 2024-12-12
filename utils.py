@@ -255,6 +255,10 @@ def reachability(start_vertex, neighbors: dict):
     x = bfs_with_neighbors(neighbors, start_vertex, None)
     return set(x.keys())
 
+def reachability_with_neighbor_generator(start_vertex, neighbor_generator):
+    x = bfs_with_neighbor_generator(neighbor_generator, start_vertex, None)
+    return set(x.keys())
+
 # # Returns length of shortest path from start_vertex to target
 # # if target is None, returns dict of shortest paths lengths to all vertices.
 # # vertex_labels: list of vertices (YOUR labels)
