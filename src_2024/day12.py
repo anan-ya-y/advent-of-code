@@ -20,10 +20,10 @@ def get_nedges(plot):
     # use a sweeping line.. but weird bc we're going in the gaps between coords.
     edge_lines = []
 
-    for line in range(int(min([plot.real for plot in plot])-1), \
+    for c in range(int(min([plot.real for plot in plot])-1), \
                    int(max([plot.real for plot in plot])+2)):
-        plot_items_in_l = set([plot.imag for plot in plot if plot.real == line])
-        plot_items_in_next = set([plot.imag for plot in plot if plot.real == line+1])
+        plot_items_in_l = set([plot.imag for plot in plot if plot.real == c])
+        plot_items_in_next = set([plot.imag for plot in plot if plot.real == c+1])
         edge_lines.append(list(plot_items_in_l.difference(plot_items_in_next)))
         edge_lines.append(list(plot_items_in_next.difference(plot_items_in_l)))
 
