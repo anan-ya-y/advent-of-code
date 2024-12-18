@@ -89,6 +89,7 @@ def test_bfs():
     }
 
     x = utils.bfs_with_neighbors(graph, 'A')
+    breakpoint()
     assert x['A'] == 0
     assert x['B'] == 1
     assert x['C'] == 1
@@ -128,3 +129,7 @@ def test_n_freqs():
     assert utils.get_n_most_frequent("aaabbccdddee", 2) == [('a', 3), ('d', 3)] 
     assert utils.get_n_most_frequent("aaabbccdddee", 3) == [('a', 3), ('d', 3), ('b', 2), ('c', 2), ('e', 2)] 
     
+
+def test_dijkstra_backtrack():
+    prev = {"a": "b", "b": "c", "c": "d", "d": "e", "e": "f"}
+    assert utils.dijkstra_backtrack("a", prev) == ["a", "b", "c", "d", "e", "f"][::-1]

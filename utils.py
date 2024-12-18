@@ -212,9 +212,50 @@ def dijkstra(vertex_labels: list, edge_function, start_vertex):
 
 def dikjstra_with_neighbors(vertex_labels: list, neighbors:dict, \
                             edge_weights:dict, start_vertex):
-    dist = {v: math.inf for v in vertex_labels}
-    prev = {v: None for v in vertex_labels}
+    # dist = {v: math.inf for v in vertex_labels}
+    # prev = {v: None for v in vertex_labels}
+    # dist[start_vertex] = 0
+    # visited = set()
+
+    # q = PriorityQueue()
+    # queue_counter = 0 # exists as tiebreaker in pq
+    # q.put((0, queue_counter, start_vertex))
+    # queue_counter += 1
+
+    # while not q.empty():
+    #     _, _, u = q.get()
+    #     if u in visited:
+    #         continue
+    #     visited.add(u)
+
+    #     for v in neighbors[u]:
+    #         if v in visited: # I think we don't need this. 
+    #             continue
+    #         alt = dist[u] + edge_weights[(u, v)]
+    #         if alt < dist[v]:
+    #             dist[v] = alt
+    #             prev[v] = u
+    #             q.put((dist[v], queue_counter, v))
+    #             queue_counter += 1
+
+    # return dist, prev
+
+    def neighbor_fn(x):
+        return neighbors[x]
+    def edge_fn(x):
+        return edge_weights[x]
+    
+    return dijkstra_with_generators(start_vertex, neighbor_fn, edge_fn)
+
+
+def dijkstra_with_generators(start_vertex, neighbor_fn, edge_fn, visited_fn=None):
+    if visited_fn is None:
+        visited_fn = lambda x, v: x in v
+
+    dist = {}
+    prev = {}
     dist[start_vertex] = 0
+    prev[start_vertex] = None
     visited = set()
 
     q = PriorityQueue()
@@ -228,18 +269,35 @@ def dikjstra_with_neighbors(vertex_labels: list, neighbors:dict, \
             continue
         visited.add(u)
 
-        for v in neighbors[u]:
-            if v in visited: # I think we don't need this. 
+        for v in neighbor_fn(u):
+            if visited_fn(v, visited):
                 continue
-            alt = dist[u] + edge_weights[(u, v)]
+            if v not in dist:
+                dist[v] = math.inf
+            if v not in prev:
+                prev[v] = None
+
+            alt = dist[u] + edge_fn(u, v)
+
             if alt < dist[v]:
                 dist[v] = alt
                 prev[v] = u
                 q.put((dist[v], queue_counter, v))
                 queue_counter += 1
+            assert v in prev
+            assert v in dist
 
     return dist, prev
 
+def dijkstra_backtrack(target, prev_dict):
+    path = []
+    u = target
+    while u is not None and u in prev_dict:
+        path.append(u)
+        u = prev_dict[u]
+    return path[::-1]
+
+    
 # RUNS REALLY SLOWLY COMPARED TO BFS IMPLEMENTATION, NOT SURE WHY.
 def reachability(start_vertex, neighbors: dict):
     # use bfs
@@ -296,7 +354,7 @@ def bfs_with_neighbors(neighbors:dict, start_vertex, target=None):
     return bfs_with_neighbor_generator(neighbor_fn, start_vertex, target)
 
 # is_target is a function that takes in a vertex and returns True if it's the target.
-def bfs_return_path(neighbors_generator, start_vertex, target, \
+def bfs_return_path(neighbors_generator, start_vertex, target=None, \
                     state_in_list=None, priority_fn=None):
     if state_in_list is None:
         state_in_list = lambda x, l: x in l
@@ -308,7 +366,7 @@ def bfs_return_path(neighbors_generator, start_vertex, target, \
     q.put((priority_fn(start_vertex), queue_counter, start_vertex, [start_vertex]))
     queue_counter += 1 
     visited = set()
-    paths = set() # set of tuples (vertex, path)
+    paths = {} # {vertex: path to vertex}
 
     # while len(q) > 0:
     while not q.empty():
@@ -319,7 +377,7 @@ def bfs_return_path(neighbors_generator, start_vertex, target, \
             continue
 
         visited.add(u)
-        paths.add((u, tuple(path)))
+        paths[u] = path
 
         if u == target:
             return path
@@ -335,12 +393,16 @@ def bfs_return_path(neighbors_generator, start_vertex, target, \
     return paths # we wanted all the paths 
 
 # neighbor_generator: function that takes input (vertex, path to vertex) outputs list of all possible neighbors
-# THE GRAPH BETTER HAVE NO CYCLES
-def bfs_distinct_paths(neighbor_generator, start_vertex, target):
+# THE GRAPH BETTER HAVE NO CYCLES - maybe cycles ok?? 
+def bfs_distinct_paths(neighbor_generator, start_vertex, target, priority_fn = None):
+    if priority_fn is None:
+        priority_fn = lambda x: 1
+
     paths = []
 
     q = []
     q.append((start_vertex, [start_vertex]))
+
     while len(q) > 0:
         u, path = q.pop(0)
 
@@ -348,9 +410,35 @@ def bfs_distinct_paths(neighbor_generator, start_vertex, target):
             paths.append(path)
         else:
             for v in neighbor_generator((u, path)):
-                if v not in path:
+                if v not in path: # this should break cycles???
                     q.append((v, path + [v]))
     
+    return paths
+
+# UNTESTED.
+def bfs_distinct_shortest_paths(neighbors_generator, start_vertex, target):
+    paths = []
+
+    q = []
+    q.append((start_vertex, [start_vertex]))
+
+    while len(q) > 0:
+        u, path = q.pop(0)
+
+        if u == target:
+            if len(paths) == 0: # this is the SP. 
+                # Any future paths we find are equal or longer. 
+                paths.append(path)
+            elif len(path) > len(paths[0]):
+                continue
+            else:
+                paths.append(path)
+        else:
+            if len(paths) > 0 and len(path) > len(paths[0]):
+                continue # already too long. 
+            for v in neighbors_generator((u, path)):
+                if v not in path:
+                    q.append((v, path + [v]))
     return paths
 
 
