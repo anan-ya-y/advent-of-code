@@ -248,15 +248,16 @@ def dikjstra_with_neighbors(vertex_labels: list, neighbors:dict, \
     return dijkstra_with_generators(start_vertex, neighbor_fn, edge_fn)
 
 
-def dijkstra_with_generators(start_vertex, neighbor_fn, edge_fn, visited_fn=None):
-    if visited_fn is None:
-        visited_fn = lambda x, v: x in v
-
+# visited_structure: data structure to store visited vertices. 
+# write a __contains__ function to redefine "v in visited" etc. 
+# also create a .add function to add stuff to the visited set
+def dijkstra_with_generators(start_vertex, neighbor_fn, edge_fn,\
+                             visited_structure=set):
     dist = {}
     prev = {}
     dist[start_vertex] = 0
     prev[start_vertex] = None
-    visited = set()
+    visited = visited_structure()
 
     q = PriorityQueue()
     queue_counter = 0 # exists as tiebreaker in pq
@@ -270,8 +271,9 @@ def dijkstra_with_generators(start_vertex, neighbor_fn, edge_fn, visited_fn=None
         visited.add(u)
 
         for v in neighbor_fn(u):
-            if visited_fn(v, visited):
+            if v in visited:
                 continue
+
             if v not in dist:
                 dist[v] = math.inf
             if v not in prev:
