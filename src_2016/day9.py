@@ -1,45 +1,41 @@
-def decompress(input, recursive=False): 
-    if '(' not in input:
-        # print("no parens", input)
-        return input
-    # print("in", input)
-
-    output = ""
+def get_decompress_length(current_length, q, recurse=False):
+    if q == []:
+        return current_length, []
+    
+    # pull the next item off the stack:
+    qty, item = q.pop(0)    
+    if "(" not in item and ")" not in item:
+        return current_length + (qty * len(item)), q
+    
+    new_length = 0
     i = 0
-    while i < len(input):
-        if input[i] == '(':
-            endloc = (input[i:]).find(')')
-            marker = input[i+1:i+endloc].split('x')
-            length = int(marker[0])
-            repeat = int(marker[1])
-
-            start_repeat = i + endloc + 1
-            end_repeat = start_repeat + length
-            
-            # for _ in range(repeat):
-            if recursive:
-                to_repeat = decompress(input[start_repeat:end_repeat], recursive=True)
+    while i < len(item):
+        if item[i] == "(":
+            end_index = item[i:].index(")")
+            multiply_str = item[i+1:i+end_index] # "4x2"
+            vals = list(map(int, multiply_str.split("x")))
+            next_chars = item[i+end_index+1:i+end_index+vals[0]+1]
+            if recurse:
+                q.append((vals[1]*qty, next_chars))
             else:
-                to_repeat = input[start_repeat:end_repeat]
-            output += to_repeat * repeat
-
-            i += endloc+1  + length
-
+                new_length += vals[0]*vals[1]
+            i += vals[0]+end_index+1
         else:
-            output += input[i]
             i += 1
-    return output
+            new_length += 1
+
+    return current_length + (new_length * qty), q
 
 def p1(input):
-    output = decompress(input)
-    # remove whitespace 
-    output = output.replace(" ", "").replace("\n", "")
-    return len(output)
+    input = input.replace(" ", "").replace("\n", "")
+    length, _ = get_decompress_length(0, [(1, input)], recurse=False)
+    return length
 
 def p2(input):
+    input = input.replace(" ", "").replace("\n", "")
+    length = 0
+    queue = [(1, input)]
+    while queue != []:
+        length, queue = get_decompress_length(length, queue, recurse=True)
 
-    orig = input
-    decompressed = decompress(input, recursive=True)
-    # remove whitespace
-    decompressed = decompressed.replace(" ", "").replace("\n", "")
-    return len(decompressed)
+    return length
