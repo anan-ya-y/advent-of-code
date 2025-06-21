@@ -22,6 +22,8 @@ def get_input_filename(year, day, sample=False):
         print("file exists. opening. ")
         return filepath
     elif not sample:
+        if not os._exists("src_" + str(year) + "/inputs/"):
+            os.makedirs("src_" + str(year) + "/inputs/")
         with open(filepath, "w") as f:
             f.write(aocd.get_data(day=day, year=year))
     else:
