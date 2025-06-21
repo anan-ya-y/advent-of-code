@@ -3,6 +3,7 @@ import utils
 # Nothing I can do about it except parallelize; this is dependent on md5 speed. 
 
 def p1(input):
+    print("Speed limited by MD5 hash speed. ")
     password = ""
 
     i = 0
