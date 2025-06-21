@@ -14,16 +14,25 @@ def look_and_say(x):
     looksay += str(count) + val
     return looksay
 
-def p1(input):
+# def p1(input):
+#     input = int(input)
+
+#     for _ in range(40):
+#         input = look_and_say(input)
+#     return len(input)
+
+# def p2(input):
+#     input = int(input)
+
+#     for _ in range(50):
+#         input = look_and_say(input)
+#     return len(input)
+
+def main(input):
     input = int(input)
-
-    for _ in range(40):
+    for i in range(50):
         input = look_and_say(input)
-    return len(input)
-
-def p2(input):
-    input = int(input)
-
-    for _ in range(50):
-        input = look_and_say(input)
-    return len(input)
+        if i == 39:
+            p1_ans = len(input)
+    p2_ans = len(input)
+    return p1_ans, p2_ans
