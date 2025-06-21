@@ -98,10 +98,10 @@ def get_next_states(state):
 
 def get_min_elevator(start_position):
     seen_states = set()
-    q = [(start_position, 0, [])]
+    q = [(start_position, 0)]
 
     while len(q) > 0:
-        state, steps, seq = q.pop(0)
+        state, steps = q.pop(0)
         serialized_state = serialize(state)
         if serialized_state in seen_states:
             continue
@@ -112,9 +112,7 @@ def get_min_elevator(start_position):
             return steps
         
         for s in get_next_states(state):
-            sc = seq.copy()
-            sc.append(s)
-            q.append((s, steps+1, sc))
+            q.append((s, steps+1))
 
     return -1
 
