@@ -32,6 +32,7 @@ def is_valid(num, part=1):
 
 
 def p1(input):
+    print("Runtime limited by speed of MD5 hashing...")
     global salt
     salt = input
 
