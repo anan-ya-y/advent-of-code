@@ -340,7 +340,7 @@ def bfs_with_neighbor_generator(neighbor_generator, start_vertex, target=None, \
         return len(k) - 1
     
     distances = {}
-    for v, path in k:
+    for v, path in k.items():
         distances[v] = len(path) - 1
 
     return distances
