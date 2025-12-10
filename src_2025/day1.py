@@ -11,13 +11,17 @@ def main(input):
     for line in input:
         dir = line[0]
         steps = int(line[1:])
+        full_laps = steps // 100
+        partials = steps % 100
+
+        p2 += full_laps
 
         prev_pos = pos
 
         if dir == "R":
-            pos += steps
+            pos += partials
         else:
-            pos -= steps
+            pos -= partials
 
         if (pos < 0 or pos > 100) and prev_pos != 0:
             p2 += 1
@@ -28,6 +32,5 @@ def main(input):
             p1 += 1
             p2 += 1
 
-        p2 += steps//100
 
     return p1, p2
