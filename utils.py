@@ -192,6 +192,18 @@ def make_graph(vertex_labels, edge_function):
                 neighbors[u].append(v)
     return edge_weights, neighbors
 
+
+# graph = {vertices: [neighbors]}
+def connected_components(graph):
+    all_vertices = set(graph.keys())
+    components = []
+    while len(all_vertices) > 0:
+        start = list(all_vertices)[0]
+        reachable = reachability(start, graph)
+        components.append(reachable)
+        all_vertices = all_vertices.difference(reachable)
+    return components
+
 # Performs Dijkstra's. Slowly, because can't find graph neighbors quickly.
 # vertex_labels: list of vertices (YOUR labels)
 # edge_function: takes in two vertices and returns the edge weight between them. 
