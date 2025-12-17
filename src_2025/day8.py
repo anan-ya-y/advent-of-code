@@ -79,6 +79,9 @@ def main(inp):
     component_sizes = [len(x) for x in components]
     component_sizes.sort(reverse=True)
     p1 = component_sizes[0] * component_sizes[1] * component_sizes[2]
+    for pt in range(len(inp)):
+        if pt not in graph:
+            graph[pt] = []
 
     for i in range(p1_connections, len(dists)):
         indices = dists[i][1], dists[i][2]
@@ -89,6 +92,7 @@ def main(inp):
         graph = add_connection(graph, dists[i])
         components = utils.connected_components(graph)
         if len(components) == 1:
+            print(indices, inp[indices[0]], inp[indices[1]])
             p2 = inp[indices[0]][0]* inp[indices[1]][0]
             break
 
