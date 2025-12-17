@@ -16,6 +16,7 @@ def get_input(inp):
         # joltage
         joltage = re.findall(r'\{(.*?)\}', i)
         joltage = list(map(int, joltage[0].split(','))) 
+        joltage = tuple(joltage)
         
         clean_inputs.append((lights, switches, joltage, nlights, original_switches))
 
@@ -49,15 +50,15 @@ def flip_many_switches(switch_mask, switches):
 
 
 def brute_force(lights, switches, joltage, nlights):
-    best_switches = 999
+    switch_combos = []
     possible_combos = list(range(1, 2**len(switches)))
     for c in possible_combos:
         state = flip_many_switches(c, switches)
         if state == lights:
-            best_switches = min(count_on_switches(c), best_switches)
+            switch_combos.append(c)
 
-    return best_switches
-        
+    return switch_combos
+
 def bfs_method(lights, switches, joltage, nlights):
     # vertices = switch masks (integer)
     # edges = next possible switch mask
@@ -91,8 +92,50 @@ def bfs_method(lights, switches, joltage, nlights):
 
 ####
 
-def add_switch_to_joltage(state, switch):
-    return tuple([state[i] + (1 if i in switch else 0) for i in range(len(state))])
+def sub_switch_from_joltage(state, switch):
+    return tuple([state[i] - (1 if i in switch else 0) for i in range(len(state))])
+
+def get_odds(joltage):
+    x = ""
+    for j in joltage:
+        x += ("#" if j % 2 == 1 else ".")
+    return lights_to_bits(x)
+
+# using the notation from the reddit post
+f_history = {} # (joltage, answer)
+def f(lights, switches, joltage, nlights, original_switches):
+    global f_history
+    if joltage in f_history:
+        return f_history[joltage]
+    
+    if all(j == 0 for j in joltage):
+        return 0
+    
+    if any(j < 0 for j in joltage):
+        return float('inf')
+
+    light_target = get_odds(joltage)
+    scores = []
+    base_flips = brute_force(light_target, switches, joltage, nlights)
+    for b in base_flips:
+        remaining_joltage = joltage
+        for i in range(len(switches)):
+            if (b >> i) & 1:
+                remaining_joltage = sub_switch_from_joltage(remaining_joltage, original_switches[i])
+
+        recurse_joltage = tuple([j//2 for j in remaining_joltage])
+
+        score = count_on_switches(b) + (2*f(lights, switches, recurse_joltage, nlights, original_switches))
+        scores.append(score)
+    
+    if light_target == 0 and not all(j == 0 for j in joltage):
+        recurse_joltage = tuple([j//2 for j in joltage])
+        score = 2*f(lights, switches, recurse_joltage, nlights, original_switches)
+        scores.append(score)
+
+    ans = min(scores) if len(scores) > 0 else float('inf')
+    f_history[joltage] = ans
+    return ans
 
 ###
 
@@ -104,14 +147,17 @@ def p1(inp):
     p1 = 0
     for i in inp:
         lights, switches, joltage, nlights, _ = i
-        # result = brute_force(lights, switches, joltage, nlights)
-        result = bfs_method(lights, switches, joltage, nlights)
+        result = brute_force(lights, switches, joltage, nlights)
+        # result = bfs_method(lights, switches, joltage, nlights)
+        result = min([count_on_switches(x) for x in result])
         
         p1 += result
 
     return p1
 
 def p2(inp):
+    global f_history
+    # https://www.reddit.com/r/adventofcode/comments/1pk87hl/2025_day_10_part_2_bifurcate_your_way_to_victory/
     inp = utils.split_and_strip(inp)
     inp = get_input(inp)
 
@@ -119,27 +165,10 @@ def p2(inp):
     for i in inp:
         lights, switches, joltage, nlights, original_switches = i
 
-        def neighbor_generator(x):
-            v, _ = x
-            neighbors = []
-            print(v, joltage)
+        f_history = {}
+        nsteps =  f(lights, switches, joltage, nlights, original_switches)
+        p2 += nsteps
 
-            # if we've gone too far, stop
-            if any([v[i] > joltage[i] for i in range(len(joltage))]):
-                return []
-            
-            # Add each switch
-            for s in original_switches:
-                new_v = v
-                for i in range(10):
-                    new_v = add_switch_to_joltage(new_v, s)
-                    neighbors.append(new_v)
-
-            return neighbors
-        
-        ans = utils.bfs_return_path(neighbor_generator, tuple([0]*len(joltage)), tuple(joltage))
-        p2 += len(ans) - 1
-        return 1
     return p2
 
 
