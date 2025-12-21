@@ -422,8 +422,7 @@ def bfs_distinct_paths(neighbor_generator, start_vertex, target, priority_fn = N
         u, path = q.pop() if dfs else q.pop(0)
 
         if u == target:
-            # paths.append(path)
-            print(path)
+            paths.append(path)
         else:
             for v in neighbor_generator((u, path)):
                 if v not in path: # this should break cycles???
@@ -562,6 +561,8 @@ def slope(p1, p2):
 
 # input: 2 poitns from line 1, 2 points from line 2
 def get_line_intersection(l1p1, l1p2, l2p1, l2p2):
+    # if l2p2[1] == 1:
+    #     breakpoint()
     # if either line is vertical, brute force it
     if slope(l1p1, l1p2) == float('inf'):
         if slope(l2p1, l2p2) == float('inf'):
@@ -585,6 +586,10 @@ def get_line_intersection(l1p1, l1p2, l2p1, l2p2):
     x = (m1*x1 - m2*x2 + y2 - y1) / (m1 - m2)
     y = m1 * (x - x1) + y1
 
+    # round (x, y) to 5 digits
+    x = round(x, 5)
+    y = round(y, 5)
+
     return (x, y) \
         if pt_on_line((x, y), l1p1, l1p2) and pt_on_line((x, y), l2p1, l2p2) \
         else None
@@ -603,6 +608,41 @@ def pt_on_line(pt, point1, point2):
         return True
     
     m = (y2-y1)/(x2-x1)
-    return (y - y1) == m * (x - x1) 
+    return ( (y - y1) - m * (x - x1) ) <= 1e-5
 
    
+
+# Shape stuff
+
+# Construct the edges of a polygon given its vertices
+def construct_edges(vertices):
+    edges = []
+    for i in range(len(vertices)):
+        next_idx = (i + 1) % len(vertices)
+        edge = (vertices[i], vertices[next_idx])
+        edges.append(edge)
+    return edges
+
+
+# ray casting, but at a diagonal (so we never have to worry about grid edges :)
+# edges_are_inside = True means that if the point is on an edge, it's considered inside.
+def point_in_shape(pt, shape_vertices, shape_edges, edges_are_inside=True):
+    max_x = max([v[0] for v in shape_vertices])
+    min_y = min([v[1] for v in shape_vertices])
+
+    ray_end = (max_x + 1, min_y - 1)
+    ray = (pt, ray_end)
+
+    intersection_points = set()
+    for edge in shape_edges:
+        if pt == edge[0] or pt == edge[1]:
+            return edges_are_inside
+        intersection_point = get_line_intersection(*ray, *edge)
+        if intersection_point is not None:
+            intersection_points.add(intersection_point)
+        if intersection_point == pt: # edge point. 
+            return edges_are_inside
+
+    return (len(intersection_points) % 2) == 1
+ 
+
