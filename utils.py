@@ -595,7 +595,7 @@ def get_line_intersection(l1p1, l1p2, l2p1, l2p2):
         else None
 
 # input: pt = point to check, point1, point2 = points on the line
-def pt_on_line(pt, point1, point2):
+def pt_on_line(pt, point1, point2, error_threshold = 1e-3):
     x1, y1 = point1
     x2, y2 = point2
     x, y = pt
@@ -608,7 +608,7 @@ def pt_on_line(pt, point1, point2):
         return True
     
     m = (y2-y1)/(x2-x1)
-    return ( (y - y1) - m * (x - x1) ) <= 1e-5
+    return abs( (y - y1) - m * (x - x1) ) <= error_threshold
 
    
 
