@@ -408,7 +408,8 @@ def bfs_return_path(neighbors_generator, start_vertex, target=None, \
 
 # neighbor_generator: function that takes input (vertex, path to vertex) outputs list of all possible neighbors
 # THE GRAPH BETTER HAVE NO CYCLES - maybe cycles ok?? 
-def bfs_distinct_paths(neighbor_generator, start_vertex, target, priority_fn = None):
+# dfs=True does DFS, False does BFS
+def bfs_distinct_paths(neighbor_generator, start_vertex, target, priority_fn = None, dfs=True):
     if priority_fn is None:
         priority_fn = lambda x: 1
 
@@ -418,16 +419,38 @@ def bfs_distinct_paths(neighbor_generator, start_vertex, target, priority_fn = N
     q.append((start_vertex, [start_vertex]))
 
     while len(q) > 0:
-        u, path = q.pop(0)
+        u, path = q.pop() if dfs else q.pop(0)
 
         if u == target:
-            paths.append(path)
+            # paths.append(path)
+            print(path)
         else:
             for v in neighbor_generator((u, path)):
                 if v not in path: # this should break cycles???
                     q.append((v, path + [v]))
     
     return paths
+
+# recursive
+# returns # of paths from start_vertex to target
+def dfs_npaths(neighbor_generator, start_vertex, target):
+    cache = {}
+
+    def calculate(v):
+        if v == target:
+            return 1
+        
+        if v in cache:
+            return cache[v]
+
+        npaths = 0
+        for n in neighbor_generator((v, None)):
+            sub_paths = calculate(n)
+            npaths += sub_paths
+        cache[v] = npaths
+        return npaths
+    
+    return calculate(start_vertex)
 
 # UNTESTED.
 def bfs_distinct_shortest_paths(neighbors_generator, start_vertex, target):
